@@ -18,6 +18,6 @@ public sealed class DashboardViewModelTests
             SystemCacheMb: 2_400));
 
         Assert.Equal("76%", viewModel.MemoryLoadText);
-        Assert.Equal("3200 MB", viewModel.AvailableMemoryText);
+        Assert.Equal("3.1 GB", viewModel.AvailableMemoryText);
     }
 }
