@@ -30,6 +30,16 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     private string _startupDelayText = "90 秒";
     private string _resumeDelayText = "60 秒";
     private string _cooldownText = "180 秒";
+    private string _selectedProcessName = "未选择进程";
+    private string _selectedProcessHint = "请选择左侧列表中的进程查看详情。";
+    private string _selectedRuleCategory = "-";
+    private string _selectedRecommendedAction = "-";
+    private string _selectedProcessMemory = "-";
+    private string _selectedProcessPrivateMemory = "-";
+    private string _selectedRuleProcessName = "chrome.exe";
+    private string _selectedRuleCategoryName = "平衡";
+    private string _selectedRuleCooldown = "5 分钟";
+    private string _selectedRuleNotes = "浏览器，允许降级和 Trim，避免直接挂起。";
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -52,181 +62,169 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     public string MemoryLoadText
     {
         get => _memoryLoadText;
-        private set
-        {
-            _memoryLoadText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _memoryLoadText, value);
     }
 
     public double MemoryLoadValue
     {
         get => _memoryLoadValue;
-        private set
-        {
-            _memoryLoadValue = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _memoryLoadValue, value);
     }
 
     public string MemorySubtitleText
     {
         get => _memorySubtitleText;
-        private set
-        {
-            _memorySubtitleText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _memorySubtitleText, value);
     }
 
     public string AvailableMemoryText
     {
         get => _availableMemoryText;
-        private set
-        {
-            _availableMemoryText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _availableMemoryText, value);
     }
 
     public string CommitUsageText
     {
         get => _commitUsageText;
-        private set
-        {
-            _commitUsageText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _commitUsageText, value);
     }
 
     public string CacheUsageText
     {
         get => _cacheUsageText;
-        private set
-        {
-            _cacheUsageText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _cacheUsageText, value);
     }
 
     public string StatusText
     {
         get => _statusText;
-        private set
-        {
-            _statusText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _statusText, value);
     }
 
     public string AutomationStatusText
     {
         get => _automationStatusText;
-        private set
-        {
-            _automationStatusText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _automationStatusText, value);
     }
 
     public string WhiteListCountText
     {
         get => _whiteListCountText;
-        private set
-        {
-            _whiteListCountText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _whiteListCountText, value);
     }
 
     public string TrimOnlyCountText
     {
         get => _trimOnlyCountText;
-        private set
-        {
-            _trimOnlyCountText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _trimOnlyCountText, value);
     }
 
     public string BalancedCountText
     {
         get => _balancedCountText;
-        private set
-        {
-            _balancedCountText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _balancedCountText, value);
     }
 
     public string SuspendEligibleCountText
     {
         get => _suspendEligibleCountText;
-        private set
-        {
-            _suspendEligibleCountText = value;
-            OnPropertyChanged();
-        }
+        private set => SetField(ref _suspendEligibleCountText, value);
     }
 
     public string MemoryThresholdText
     {
         get => _memoryThresholdText;
-        private set
-        {
-            _memoryThresholdText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _memoryThresholdText, value);
     }
 
     public string AvailableThresholdText
     {
         get => _availableThresholdText;
-        private set
-        {
-            _availableThresholdText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _availableThresholdText, value);
     }
 
     public string SustainedPressureText
     {
         get => _sustainedPressureText;
-        private set
-        {
-            _sustainedPressureText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _sustainedPressureText, value);
     }
 
     public string StartupDelayText
     {
         get => _startupDelayText;
-        private set
-        {
-            _startupDelayText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _startupDelayText, value);
     }
 
     public string ResumeDelayText
     {
         get => _resumeDelayText;
-        private set
-        {
-            _resumeDelayText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _resumeDelayText, value);
     }
 
     public string CooldownText
     {
         get => _cooldownText;
-        private set
-        {
-            _cooldownText = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _cooldownText, value);
+    }
+
+    public string SelectedProcessName
+    {
+        get => _selectedProcessName;
+        private set => SetField(ref _selectedProcessName, value);
+    }
+
+    public string SelectedProcessHint
+    {
+        get => _selectedProcessHint;
+        private set => SetField(ref _selectedProcessHint, value);
+    }
+
+    public string SelectedRuleCategory
+    {
+        get => _selectedRuleCategory;
+        private set => SetField(ref _selectedRuleCategory, value);
+    }
+
+    public string SelectedRecommendedAction
+    {
+        get => _selectedRecommendedAction;
+        private set => SetField(ref _selectedRecommendedAction, value);
+    }
+
+    public string SelectedProcessMemory
+    {
+        get => _selectedProcessMemory;
+        private set => SetField(ref _selectedProcessMemory, value);
+    }
+
+    public string SelectedProcessPrivateMemory
+    {
+        get => _selectedProcessPrivateMemory;
+        private set => SetField(ref _selectedProcessPrivateMemory, value);
+    }
+
+    public string SelectedRuleProcessName
+    {
+        get => _selectedRuleProcessName;
+        set => SetField(ref _selectedRuleProcessName, value);
+    }
+
+    public string SelectedRuleCategoryName
+    {
+        get => _selectedRuleCategoryName;
+        set => SetField(ref _selectedRuleCategoryName, value);
+    }
+
+    public string SelectedRuleCooldown
+    {
+        get => _selectedRuleCooldown;
+        set => SetField(ref _selectedRuleCooldown, value);
+    }
+
+    public string SelectedRuleNotes
+    {
+        get => _selectedRuleNotes;
+        set => SetField(ref _selectedRuleNotes, value);
     }
 
     public void Update(SystemMemorySnapshot snapshot, IReadOnlyList<ProcessMemorySnapshot>? processSnapshots = null)
@@ -248,25 +246,27 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
             {
                 var category = InferRuleCategory(process.ProcessName);
                 var lastActive = process.LastForegroundSeenAt.ToString("HH:mm:ss");
+                var workingSet = FormatBytes(process.WorkingSetBytes);
+                var privateBytes = FormatBytes(process.PrivateBytes);
 
                 TopProcesses.Add(new ProcessOverviewItem(
-                    Process: process.ProcessName,
-                    Pid: process.ProcessId,
-                    WorkingSet: FormatBytes(process.WorkingSetBytes),
-                    PrivateBytes: FormatBytes(process.PrivateBytes),
-                    Rule: category,
-                    LastActive: lastActive,
-                    Action: "Trim"));
+                    process.ProcessName,
+                    process.ProcessId,
+                    workingSet,
+                    privateBytes,
+                    category,
+                    lastActive,
+                    "Trim"));
 
                 ProcessManagementItems.Add(new ProcessManagementItem(
-                    ProcessName: process.ProcessName,
-                    ProcessId: process.ProcessId,
-                    MemoryUsage: FormatBytes(process.WorkingSetBytes),
-                    PrivateMemory: FormatBytes(process.PrivateBytes),
-                    LastActive: lastActive,
-                    RuleCategory: category,
-                    RecommendedAction: category == "白名单" ? "无须操作" : "Trim 工作集",
-                    ManualActions: category == "白名单" ? "查看详情" : "Trim / 调优"));
+                    process.ProcessName,
+                    process.ProcessId,
+                    workingSet,
+                    privateBytes,
+                    lastActive,
+                    category,
+                    category == "白名单" ? "无须操作" : "Trim 工作集",
+                    category == "白名单" ? "查看详情" : "Trim / 调优"));
             }
         }
 
@@ -276,6 +276,18 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         }
     }
 
+    public void LoadRules(IEnumerable<RuleManagementItem> items)
+    {
+        RuleItems.Clear();
+
+        foreach (var item in items)
+        {
+            RuleItems.Add(item);
+        }
+
+        UpdateRuleCounts();
+    }
+
     public void LoadDefaultRules()
     {
         if (RuleItems.Count > 0)
@@ -283,16 +295,14 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
             return;
         }
 
-        RuleItems.Add(new RuleManagementItem("WeChat.exe", "进程名", "白名单", "按需", "禁用", "禁用", "禁用", "-", "即时通讯"));
-        RuleItems.Add(new RuleManagementItem("SecureLineVPN.exe", "进程名", "白名单", "按需", "禁用", "禁用", "禁用", "-", "VPN 连接"));
-        RuleItems.Add(new RuleManagementItem("chrome.exe", "进程名", "平衡", "启用", "降低优先级", "启用", "禁用", "5 分钟", "浏览器"));
-        RuleItems.Add(new RuleManagementItem("Cherry Studio.exe", "进程名", "仅清理", "启用", "禁用", "禁用", "禁用", "5 分钟", "翻译工具"));
-        RuleItems.Add(new RuleManagementItem("Everything.exe", "进程名", "可挂起", "启用", "降低优先级", "启用", "启用", "10 分钟", "后台工具"));
-
-        WhiteListCountText = RuleItems.Count(item => item.Category == "白名单").ToString();
-        TrimOnlyCountText = RuleItems.Count(item => item.Category == "仅清理").ToString();
-        BalancedCountText = RuleItems.Count(item => item.Category == "平衡").ToString();
-        SuspendEligibleCountText = RuleItems.Count(item => item.Category == "可挂起").ToString();
+        LoadRules(new[]
+        {
+            new RuleManagementItem("WeChat.exe", "进程名", "白名单", "按需", "禁用", "禁用", "禁用", "-", "即时通讯"),
+            new RuleManagementItem("SecureLineVPN.exe", "进程名", "白名单", "按需", "禁用", "禁用", "禁用", "-", "VPN 连接"),
+            new RuleManagementItem("chrome.exe", "进程名", "平衡", "启用", "降低优先级", "启用", "禁用", "5 分钟", "浏览器"),
+            new RuleManagementItem("Cherry Studio.exe", "进程名", "仅清理", "启用", "禁用", "禁用", "禁用", "5 分钟", "翻译工具"),
+            new RuleManagementItem("Everything.exe", "进程名", "可挂起", "启用", "降低优先级", "启用", "启用", "10 分钟", "后台工具")
+        });
     }
 
     public void LoadDefaultAutomationSettings(MemoryPolicySettings settings)
@@ -303,6 +313,77 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         StartupDelayText = $"{settings.StartupDelaySeconds} 秒";
         ResumeDelayText = $"{settings.ResumeDelaySeconds} 秒";
         CooldownText = $"{settings.GlobalCooldownSeconds} 秒";
+    }
+
+    public void SelectProcess(ProcessManagementItem? processItem)
+    {
+        if (processItem is null)
+        {
+            SelectedProcessName = "未选择进程";
+            SelectedProcessHint = "请选择左侧列表中的进程查看详情。";
+            SelectedRuleCategory = "-";
+            SelectedRecommendedAction = "-";
+            SelectedProcessMemory = "-";
+            SelectedProcessPrivateMemory = "-";
+            return;
+        }
+
+        SelectedProcessName = $"{processItem.ProcessName} ({processItem.ProcessId})";
+        SelectedProcessHint = $"最近活动：{processItem.LastActive}";
+        SelectedRuleCategory = processItem.RuleCategory;
+        SelectedRecommendedAction = processItem.RecommendedAction;
+        SelectedProcessMemory = processItem.MemoryUsage;
+        SelectedProcessPrivateMemory = processItem.PrivateMemory;
+    }
+
+    public void SelectRule(RuleManagementItem? ruleItem)
+    {
+        if (ruleItem is null)
+        {
+            return;
+        }
+
+        SelectedRuleProcessName = ruleItem.ProcessName;
+        SelectedRuleCategoryName = ruleItem.Category;
+        SelectedRuleCooldown = ruleItem.Cooldown;
+        SelectedRuleNotes = ruleItem.Notes;
+    }
+
+    public void ApplyRuleEditorValues()
+    {
+        var existing = RuleItems.FirstOrDefault(item => string.Equals(item.ProcessName, SelectedRuleProcessName, StringComparison.OrdinalIgnoreCase));
+        var newItem = new RuleManagementItem(
+            SelectedRuleProcessName,
+            "进程名",
+            SelectedRuleCategoryName,
+            "启用",
+            SelectedRuleCategoryName == "白名单" ? "禁用" : "降低优先级",
+            SelectedRuleCategoryName is "白名单" or "仅清理" ? "禁用" : "启用",
+            SelectedRuleCategoryName == "可挂起" ? "启用" : "禁用",
+            SelectedRuleCooldown,
+            SelectedRuleNotes);
+
+        if (existing is null)
+        {
+            RuleItems.Add(newItem);
+        }
+        else
+        {
+            var index = RuleItems.IndexOf(existing);
+            RuleItems[index] = newItem;
+        }
+
+        UpdateRuleCounts();
+    }
+
+    public IEnumerable<RuleManagementItem> ExportRules() => RuleItems.ToArray();
+
+    private void UpdateRuleCounts()
+    {
+        WhiteListCountText = RuleItems.Count(item => item.Category == "白名单").ToString();
+        TrimOnlyCountText = RuleItems.Count(item => item.Category == "仅清理").ToString();
+        BalancedCountText = RuleItems.Count(item => item.Category == "平衡").ToString();
+        SuspendEligibleCountText = RuleItems.Count(item => item.Category == "可挂起").ToString();
     }
 
     private static string InferRuleCategory(string processName)
@@ -335,6 +416,14 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         return mb >= 1024 ? $"{mb / 1024d:F2} GB" : $"{mb:F0} MB";
     }
 
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
+    private void SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return;
+        }
+
+        field = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
