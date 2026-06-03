@@ -32,6 +32,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White" />
             <Setter Property="BorderBrush" Value="#E6EDF3" />
@@ -39,10 +40,16 @@
             <Setter Property="CornerRadius" Value="16" />
             <Setter Property="Padding" Value="20" />
         </Style>
+
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="#202938" />
+        </Style>
+
+        <Style x:Key="SubtleTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#6B778C" />
+            <Setter Property="FontSize" Value="14" />
         </Style>
     </Window.Resources>
 
@@ -62,7 +69,7 @@
 
                 <DockPanel Margin="24,0,24,0" VerticalAlignment="Center">
                     <Border Width="32" Height="32" Background="#0E949E" CornerRadius="10">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Text="🛡" />
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Text="MG" />
                     </Border>
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="Memory Guardian" />
                 </DockPanel>
@@ -79,8 +86,8 @@
                 <Border Grid.Row="2" Margin="16" Style="{StaticResource CardStyle}">
                     <StackPanel>
                         <TextBlock Foreground="#202938" FontSize="18" FontWeight="SemiBold" Text="服务运行中" />
-                        <TextBlock Margin="0,12,0,0" Foreground="#6B778C" FontSize="14" Text="v1.3.0.0" />
-                        <TextBlock Margin="0,8,0,0" Foreground="#6B778C" FontSize="14" Text="实时采样与自动治理已启用" />
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource SubtleTextStyle}" Text="v1.3.0.0" />
+                        <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="实时采样与自动治理已启用" />
                     </StackPanel>
                 </Border>
             </Grid>
@@ -110,39 +117,39 @@
                 <UniformGrid Grid.Row="1" Margin="0,0,0,16" Rows="1" Columns="6">
                     <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="内存使用率" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="内存使用率" />
                             <TextBlock Margin="0,8,0,6" FontSize="34" FontWeight="SemiBold" Foreground="#0E949E" Text="{Binding MemoryLoadText}" />
                             <ProgressBar Height="8" Value="{Binding MemoryLoadValue}" Maximum="100" Foreground="#0E949E" Background="#E4ECF2" />
-                            <TextBlock Margin="0,8,0,0" Foreground="#6B778C" FontSize="13" Text="{Binding MemorySubtitleText}" />
+                            <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="{Binding MemorySubtitleText}" />
                         </StackPanel>
                     </Border>
                     <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="可用内存" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="可用内存" />
                             <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#2C9B43" Text="{Binding AvailableMemoryText}" />
                         </StackPanel>
                     </Border>
                     <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="提交使用量" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="提交使用量" />
                             <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#4169E1" Text="{Binding CommitUsageText}" />
                         </StackPanel>
                     </Border>
                     <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="系统缓存" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="系统缓存" />
                             <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#5B6C8D" Text="{Binding CacheUsageText}" />
                         </StackPanel>
                     </Border>
                     <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="状态" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="状态" />
                             <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#2C9B43" Text="{Binding StatusText}" />
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Foreground="#6B778C" FontSize="14" Text="自动化状态" />
+                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="自动化状态" />
                             <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#1E8E3E" Text="{Binding AutomationStatusText}" />
                         </StackPanel>
                     </Border>
@@ -162,9 +169,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <DockPanel>
-                                <TextBlock Style="{StaticResource SectionTitleStyle}" Text="内存占用 Top 进程" />
-                            </DockPanel>
+                            <TextBlock Style="{StaticResource SectionTitleStyle}" Text="内存占用 Top 进程" />
                             <DataGrid Grid.Row="1"
                                       Margin="0,16,0,0"
                                       AutoGenerateColumns="False"
@@ -193,9 +198,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <DockPanel>
-                                <TextBlock Style="{StaticResource SectionTitleStyle}" Text="最近操作" />
-                            </DockPanel>
+                            <TextBlock Style="{StaticResource SectionTitleStyle}" Text="最近操作" />
                             <DataGrid Grid.Row="1"
                                       Margin="0,16,0,0"
                                       AutoGenerateColumns="False"
@@ -220,37 +223,329 @@
 
             <ScrollViewer x:Name="ProcessesPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="进程管理" />
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="进程筛选与动作面板" />
-                            <TextBlock Margin="0,12,0,0" Foreground="#6B778C" Text="该页将承接真实进程筛选、排序、规则切换和手动回收动作，风格已统一到仪表盘样式。" />
-                        </StackPanel>
+                    <DockPanel Margin="0,4,0,16">
+                        <TextBlock Style="{StaticResource SectionTitleStyle}" Text="进程管理" />
+                        <Border DockPanel.Dock="Right" Background="White" BorderBrush="#DDE7EF" BorderThickness="1" CornerRadius="12" Padding="16,10">
+                            <TextBlock Foreground="#202938" FontWeight="SemiBold" Text="刷新列表" />
+                        </Border>
+                    </DockPanel>
+
+                    <Border Margin="0,0,0,16" Style="{StaticResource CardStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="ProcessSearchBox"
+                                     Grid.Column="0"
+                                     Margin="0,0,16,0"
+                                     Padding="12,10"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="ProcessSearchBox_OnTextChanged"
+                                     Text=""/>
+                            <ComboBox x:Name="ProcessCategoryFilter"
+                                      Grid.Column="1"
+                                      Margin="0,0,16,0"
+                                      Padding="8"
+                                      SelectionChanged="ProcessCategoryFilter_OnSelectionChanged"
+                                      SelectedIndex="0">
+                                <ComboBoxItem Content="全部类别" />
+                                <ComboBoxItem Content="白名单" />
+                                <ComboBoxItem Content="仅清理" />
+                                <ComboBoxItem Content="平衡" />
+                                <ComboBoxItem Content="自动清理" />
+                            </ComboBox>
+                            <CheckBox Grid.Column="2" VerticalAlignment="Center" Content="仅显示高内存进程" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource SubtleTextStyle}" Text="支持搜索、分类筛选和实时刷新" />
+                        </Grid>
                     </Border>
+
+                    <Border Margin="0,0,0,16" Style="{StaticResource CardStyle}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource SectionTitleStyle}" Text="进程列表" />
+                            <DataGrid x:Name="ProcessManagementGrid"
+                                      Grid.Row="1"
+                                      Margin="0,16,0,0"
+                                      AutoGenerateColumns="False"
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding ProcessManagementItems}"
+                                      GridLinesVisibility="Horizontal"
+                                      BorderThickness="0">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="进程名" Binding="{Binding ProcessName}" Width="*" />
+                                    <DataGridTextColumn Header="PID" Binding="{Binding ProcessId}" Width="80" />
+                                    <DataGridTextColumn Header="内存使用" Binding="{Binding MemoryUsage}" Width="120" />
+                                    <DataGridTextColumn Header="私有内存" Binding="{Binding PrivateMemory}" Width="120" />
+                                    <DataGridTextColumn Header="最近活动" Binding="{Binding LastActive}" Width="100" />
+                                    <DataGridTextColumn Header="规则" Binding="{Binding RuleCategory}" Width="90" />
+                                    <DataGridTextColumn Header="推荐动作" Binding="{Binding RecommendedAction}" Width="120" />
+                                    <DataGridTextColumn Header="手动动作" Binding="{Binding ManualActions}" Width="120" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Border>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.2*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="0.9*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="选中进程详情" />
+                                <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="当前阶段将显示基于实时采样的概览信息，下一轮会继续补进程详情与单进程趋势。" />
+                                <TextBlock Margin="0,12,0,0" Foreground="#202938" FontWeight="SemiBold" Text="建议：" />
+                                <TextBlock Margin="0,6,0,0" Style="{StaticResource SubtleTextStyle}" Text="通信类、VPN 类应用建议保留为白名单或仅清理。" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Margin="12,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="内存趋势（近期）" />
+                                <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="本页趋势与仪表盘保持一致的配色和密度，后续会接选中进程的独立折线图。" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Margin="12,0,0,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="上次清理结果" />
+                                <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="动作：Trim 工作集" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="结果：成功" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="回收内存：512 MB" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
 
             <ScrollViewer x:Name="RulesPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="规则管理" />
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="规则分类概览" />
-                            <TextBlock Margin="0,12,0,0" Foreground="#6B778C" Text="白名单、仅清理、平衡、可挂起四类规则都会沿用前 3 张图的卡片、边框和高密度表格风格。" />
-                        </StackPanel>
-                    </Border>
+
+                    <UniformGrid Margin="0,0,0,16" Rows="1" Columns="4">
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}" Background="#F3FBF6">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#22863A" Text="白名单" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#22863A" Text="{Binding WhiteListCountText}" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="不自动挂起，优先保护关键进程" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}" Background="#F3F7FF">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#245BDB" Text="仅清理" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#245BDB" Text="{Binding TrimOnlyCountText}" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="允许 Trim，不自动挂起" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}" Background="#FFF9EF">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#C97A00" Text="平衡" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#C97A00" Text="{Binding BalancedCountText}" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="自动清理与降优先级" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}" Background="#FFF4F4">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#D14343" Text="可挂起" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#D14343" Text="{Binding SuspendEligibleCountText}" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="只在高压下允许挂起" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*" />
+                            <ColumnDefinition Width="0.9*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{StaticResource SectionTitleStyle}" Text="规则列表" />
+                                <DataGrid Grid.Row="1"
+                                          Margin="0,16,0,0"
+                                          AutoGenerateColumns="False"
+                                          HeadersVisibility="Column"
+                                          CanUserAddRows="False"
+                                          IsReadOnly="True"
+                                          ItemsSource="{Binding RuleItems}"
+                                          GridLinesVisibility="Horizontal"
+                                          BorderThickness="0">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="进程名称" Binding="{Binding ProcessName}" Width="*" />
+                                        <DataGridTextColumn Header="匹配类型" Binding="{Binding MatchType}" Width="90" />
+                                        <DataGridTextColumn Header="类别" Binding="{Binding Category}" Width="90" />
+                                        <DataGridTextColumn Header="自动清理" Binding="{Binding AutoTrim}" Width="90" />
+                                        <DataGridTextColumn Header="优先级" Binding="{Binding PriorityMode}" Width="100" />
+                                        <DataGridTextColumn Header="电源节流" Binding="{Binding PowerThrottling}" Width="90" />
+                                        <DataGridTextColumn Header="自动挂起" Binding="{Binding AutoSuspend}" Width="90" />
+                                        <DataGridTextColumn Header="冷却时间" Binding="{Binding Cooldown}" Width="90" />
+                                        <DataGridTextColumn Header="备注" Binding="{Binding Notes}" Width="120" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitleStyle}" Text="编辑规则" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="进程匹配" />
+                                <TextBox Padding="12,10" Text="chrome.exe" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="类别" />
+                                <ComboBox SelectedIndex="2" Padding="8">
+                                    <ComboBoxItem Content="白名单" />
+                                    <ComboBoxItem Content="仅清理" />
+                                    <ComboBoxItem Content="平衡" />
+                                    <ComboBoxItem Content="可挂起" />
+                                </ComboBox>
+                                <CheckBox Margin="0,18,0,0" Content="允许自动清理内存（Trim）" IsChecked="True" />
+                                <CheckBox Margin="0,10,0,0" Content="允许降低内存优先级" IsChecked="True" />
+                                <CheckBox Margin="0,10,0,0" Content="允许电源节流 / Eco 模式" IsChecked="True" />
+                                <CheckBox Margin="0,10,0,0" Content="允许自动挂起" />
+                                <TextBlock Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="冷却时间" />
+                                <TextBox Padding="12,10" Text="5 分钟" />
+                                <TextBlock Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="备注" />
+                                <TextBox Height="100" TextWrapping="Wrap" AcceptsReturn="True" Padding="12" Text="浏览器，允许降级和 Trim，避免直接挂起。" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
 
             <ScrollViewer x:Name="AutomationPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="自动化策略" />
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="分级清理策略" />
-                            <TextBlock Margin="0,12,0,0" Foreground="#6B778C" Text="该页会继续承接阈值设置、冷却时间、保护行为和分级清理配置。" />
+
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.95*" />
+                            <ColumnDefinition Width="1.2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="自动清理总开关" />
+                                <TextBlock Margin="0,16,0,0" FontSize="26" FontWeight="SemiBold" Foreground="#0E949E" Text="已启用" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="当前模式：Balanced（平衡）" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource CardStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.ColumnSpan="2" FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="触发条件设置" />
+
+                                <TextBlock Grid.Row="1" Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="内存使用率阈值" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="可用内存阈值" />
+                                <TextBox Grid.Row="2" Margin="0,0,16,0" Padding="12,10" Text="{Binding MemoryThresholdText}" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Padding="12,10" Text="{Binding AvailableThresholdText}" />
+
+                                <TextBlock Grid.Row="3" Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="持续高压时长" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="启动延迟清理" />
+                                <TextBox Grid.Row="4" Margin="0,0,16,0" Padding="12,10" Text="{Binding SustainedPressureText}" />
+                                <TextBox Grid.Row="4" Grid.Column="1" Padding="12,10" Text="{Binding StartupDelayText}" />
+
+                                <TextBlock Grid.Row="5" Margin="18,18,0,8" Grid.Column="0" Style="{StaticResource SubtleTextStyle}" Text="唤醒后延迟" />
+                                <TextBlock Grid.Row="5" Grid.Column="1" Margin="0,18,0,8" Style="{StaticResource SubtleTextStyle}" Text="全局冷却时间" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.2*" />
+                            <ColumnDefinition Width="0.9*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="分级清理策略" />
+                                <Border Margin="0,16,0,10" Background="#F7FCFD" BorderBrush="#DCEFF1" BorderThickness="1" CornerRadius="12" Padding="16">
+                                    <DockPanel>
+                                        <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="#22863A" Text="1" />
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="等级 1（轻度）" />
+                                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="修剪不活跃的后台进程，释放工作集。" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Margin="0,0,0,10" Background="#FFF9EF" BorderBrush="#F5E2B8" BorderThickness="1" CornerRadius="12" Padding="16">
+                                    <DockPanel>
+                                        <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="#C97A00" Text="2" />
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="等级 2（中度）" />
+                                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="降低后台进程优先级，并启用节流。" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Margin="0,0,0,10" Background="#FFF4F4" BorderBrush="#F5C8C8" BorderThickness="1" CornerRadius="12" Padding="16">
+                                    <DockPanel>
+                                        <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="#D14343" Text="3" />
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="等级 3（强化）" />
+                                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="清理低优先级 Standby 列表并合并内存页。" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Background="#FFF4F4" BorderBrush="#F3C0C0" BorderThickness="1" CornerRadius="12" Padding="16">
+                                    <DockPanel>
+                                        <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="#B91C1C" Text="4" />
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="等级 4（激进）" />
+                                            <TextBlock Style="{StaticResource SubtleTextStyle}" Text="仅对白名单外且允许挂起的进程执行挂起。" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                            <Border Margin="0,0,0,16" Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="保护行为" />
+                                    <CheckBox Margin="0,16,0,0" Content="保护前台进程（不清理当前正在使用的应用）" IsChecked="True" />
+                                    <CheckBox Margin="0,10,0,0" Content="白名单保护（不允许自动挂起）" IsChecked="True" />
+                                    <CheckBox Margin="0,10,0,0" Content="保护网络敏感进程" IsChecked="True" />
+                                    <CheckBox Margin="0,10,0,0" Content="新启动进程保护期" IsChecked="True" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="测试自动清理" />
+                                    <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="支持 Dry Run 与模拟执行，验证当前规则命中结果。" />
+                                    <TextBox Margin="0,16,0,0" Padding="12,10" Text="{Binding ResumeDelayText}" />
+                                    <TextBox Margin="0,12,0,0" Padding="12,10" Text="{Binding CooldownText}" />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-                    </Border>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
 
@@ -259,8 +554,8 @@
                     <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="历史记录" />
                     <Border Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="历史与效果分析" />
-                            <TextBlock Margin="0,12,0,0" Foreground="#6B778C" Text="该页风格已向仪表盘与进程页统一，后续会补时间筛选、趋势图叠加和动作明细。" />
+                            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="历史与效果分析" />
+                            <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="此页已统一到当前桌面工具风格，后续会补充时间筛选、趋势叠加、动作日志和效果摘要。" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -271,8 +566,8 @@
                     <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="设置" />
                     <Border Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="通用与高级设置" />
-                            <TextBlock Margin="0,12,0,0" Foreground="#6B778C" Text="该页后续会承接采样周期、日志、托盘行为、执行器权限和通知设置，并统一沿用当前页面语言。" />
+                            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="通用与高级设置" />
+                            <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="此页已统一到前 3 页风格，后续会接入采样周期、日志、通知、托盘与权限设置。" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

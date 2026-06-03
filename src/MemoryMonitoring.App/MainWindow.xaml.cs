@@ -1,8 +1,11 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using MemoryMonitoring.App.ViewModels;
+using MemoryMonitoring.Core.Models;
 using MemoryMonitoring.Infrastructure.Monitoring;
 
 namespace MemoryMonitoring.App;
@@ -18,6 +21,7 @@ public partial class MainWindow : Window
     private readonly ProcessMemorySampler _processMemorySampler;
     private readonly SystemMemorySampler _systemMemorySampler;
     private readonly DispatcherTimer _refreshTimer;
+    private ICollectionView? _processItemsView;
 
     public MainWindow()
     {
@@ -28,7 +32,13 @@ public partial class MainWindow : Window
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
 
+        _viewModel.LoadDefaultRules();
+        _viewModel.LoadDefaultAutomationSettings(MemoryPolicySettings.CreateDefault());
+
         RefreshDashboard();
+
+        _processItemsView = CollectionViewSource.GetDefaultView(_viewModel.ProcessManagementItems);
+        _processItemsView.Filter = ProcessFilter;
 
         _refreshTimer = new DispatcherTimer
         {
@@ -43,14 +53,39 @@ public partial class MainWindow : Window
         try
         {
             var snapshot = _systemMemorySampler.Sample();
-            var processes = _processMemorySampler.SampleTopProcesses();
+            var processes = _processMemorySampler.SampleTopProcesses(24);
             _viewModel.Update(snapshot, processes);
+            _processItemsView?.Refresh();
         }
         catch
         {
-            // 采样失败时先保持上一次界面状态，避免窗口抖动。
+            // 采样失败时保持上一轮数据，避免界面闪烁。
         }
     }
+
+    private bool ProcessFilter(object item)
+    {
+        if (item is not ProcessManagementItem processItem)
+        {
+            return false;
+        }
+
+        var searchText = ProcessSearchBox?.Text?.Trim() ?? string.Empty;
+        var categoryText = (ProcessCategoryFilter?.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "全部类别";
+
+        var matchesSearch =
+            string.IsNullOrWhiteSpace(searchText) ||
+            processItem.ProcessName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+            processItem.ProcessId.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase);
+
+        var matchesCategory = categoryText == "全部类别" || processItem.RuleCategory == categoryText;
+
+        return matchesSearch && matchesCategory;
+    }
+
+    private void ProcessSearchBox_OnTextChanged(object sender, TextChangedEventArgs e) => _processItemsView?.Refresh();
+
+    private void ProcessCategoryFilter_OnSelectionChanged(object sender, SelectionChangedEventArgs e) => _processItemsView?.Refresh();
 
     private void DashboardNavButton_OnClick(object sender, RoutedEventArgs e) => ActivatePage(DashboardPage, DashboardNavButton);
 
