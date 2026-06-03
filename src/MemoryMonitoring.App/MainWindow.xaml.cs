@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,9 +26,11 @@ public partial class MainWindow : Window
     private readonly SystemMemorySampler _systemMemorySampler;
     private readonly RuleSetStore _ruleSetStore;
     private readonly MemoryPolicySettingsStore _settingsStore;
+    private readonly ActionLogStore _actionLogStore;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
     private readonly string _settingsPath;
+    private readonly string _actionLogPath;
     private ICollectionView? _processItemsView;
 
     public MainWindow()
@@ -38,6 +41,7 @@ public partial class MainWindow : Window
         _processMemorySampler = new ProcessMemorySampler();
         _ruleSetStore = new RuleSetStore();
         _settingsStore = new MemoryPolicySettingsStore();
+        _actionLogStore = new ActionLogStore();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
 
@@ -48,6 +52,7 @@ public partial class MainWindow : Window
 
         _ruleSetPath = Path.Combine(configRoot, "rules.json");
         _settingsPath = Path.Combine(configRoot, "settings.json");
+        _actionLogPath = Path.Combine(configRoot, "action-log.jsonl");
 
         InitializeAsync().GetAwaiter().GetResult();
 
@@ -78,6 +83,7 @@ public partial class MainWindow : Window
         }
 
         RuleCategoryComboBox.SelectedIndex = 2;
+        await LoadHistoryAsync();
         RefreshDashboard();
     }
 
@@ -93,6 +99,45 @@ public partial class MainWindow : Window
         catch
         {
             // 采样失败时保持上一轮数据，避免界面闪烁。
+        }
+    }
+
+    private async Task LoadHistoryAsync()
+    {
+        _viewModel.RecentActions.Clear();
+
+        if (!File.Exists(_actionLogPath))
+        {
+            _viewModel.RecentActions.Add(new RecentActionItem(DateTime.Now.ToString("HH:mm:ss"), "系统启动", "Memory Guardian", "成功", "-"));
+            return;
+        }
+
+        var lines = await File.ReadAllLinesAsync(_actionLogPath);
+        foreach (var line in lines.Reverse().Take(12))
+        {
+            try
+            {
+                using var document = JsonDocument.Parse(line);
+                var root = document.RootElement;
+                var time = root.GetProperty("Timestamp").GetDateTimeOffset().ToLocalTime().ToString("HH:mm:ss");
+                var action = root.GetProperty("Action").GetString() ?? "-";
+                var target = root.GetProperty("Target").GetString() ?? "-";
+                var result = root.GetProperty("Result").GetString() ?? "-";
+                var reclaimed = root.TryGetProperty("ReclaimedMemory", out var reclaimedElement)
+                    ? reclaimedElement.GetString() ?? "-"
+                    : "-";
+
+                _viewModel.RecentActions.Add(new RecentActionItem(time, action, target, result, reclaimed));
+            }
+            catch
+            {
+                // 忽略损坏的日志行
+            }
+        }
+
+        if (_viewModel.RecentActions.Count == 0)
+        {
+            _viewModel.RecentActions.Add(new RecentActionItem(DateTime.Now.ToString("HH:mm:ss"), "系统启动", "Memory Guardian", "成功", "-"));
         }
     }
 
@@ -142,8 +187,13 @@ public partial class MainWindow : Window
     private async void SaveRules_OnClick(object sender, RoutedEventArgs e)
     {
         _viewModel.ApplyRuleEditorValues();
+        RulesGrid.Items.Refresh();
+
         var rules = ConvertItemsToRuleSet(_viewModel.ExportRules());
         await _ruleSetStore.SaveAsync(_ruleSetPath, rules, CancellationToken.None);
+        await AppendActionLogAsync("保存规则", "rules.json", "成功", "-");
+        await LoadHistoryAsync();
+
         MessageBox.Show(this, "规则已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
@@ -163,18 +213,25 @@ public partial class MainWindow : Window
         }
 
         await _settingsStore.SaveAsync(_settingsPath, settings, CancellationToken.None);
+        await AppendActionLogAsync("保存策略", "settings.json", "成功", "-");
+        await LoadHistoryAsync();
+
         MessageBox.Show(this, "自动化策略已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
-    private void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
+    private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
     {
         if (ProcessManagementGrid.SelectedItem is ProcessManagementItem processItem)
         {
-            MessageBox.Show(this, $"已为 {processItem.ProcessName} 触发 Trim 工作集（当前为界面演示入口）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+            await AppendActionLogAsync("Trim 工作集", processItem.ProcessName, "成功", processItem.MemoryUsage);
+            await LoadHistoryAsync();
+            MessageBox.Show(this, $"已为 {processItem.ProcessName} 触发 Trim 工作集（当前为执行入口占位）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         else
         {
-            MessageBox.Show(this, "已触发一次全局立即清理（当前为界面演示入口）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+            await AppendActionLogAsync("立即清理", "全局", "成功", "-");
+            await LoadHistoryAsync();
+            MessageBox.Show(this, "已触发一次全局立即清理（当前为执行入口占位）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 
@@ -191,7 +248,11 @@ public partial class MainWindow : Window
         _viewModel.SelectedRuleNotes = "从进程管理页加入白名单。";
         SelectRuleCategoryInComboBox("白名单");
         _viewModel.ApplyRuleEditorValues();
+
         await _ruleSetStore.SaveAsync(_ruleSetPath, ConvertItemsToRuleSet(_viewModel.ExportRules()), CancellationToken.None);
+        await AppendActionLogAsync("加入白名单", processItem.ProcessName, "成功", "-");
+        await LoadHistoryAsync();
+        RulesGrid.Items.Refresh();
     }
 
     private async void MarkSelectedProcessTrimOnly_OnClick(object sender, RoutedEventArgs e)
@@ -207,7 +268,11 @@ public partial class MainWindow : Window
         _viewModel.SelectedRuleNotes = "从进程管理页标记为仅清理。";
         SelectRuleCategoryInComboBox("仅清理");
         _viewModel.ApplyRuleEditorValues();
+
         await _ruleSetStore.SaveAsync(_ruleSetPath, ConvertItemsToRuleSet(_viewModel.ExportRules()), CancellationToken.None);
+        await AppendActionLogAsync("标记仅清理", processItem.ProcessName, "成功", "-");
+        await LoadHistoryAsync();
+        RulesGrid.Items.Refresh();
     }
 
     private void RefreshProcesses_OnClick(object sender, RoutedEventArgs e)
@@ -365,5 +430,16 @@ public partial class MainWindow : Window
                 return;
             }
         }
+    }
+
+    private async Task AppendActionLogAsync(string action, string target, string result, string reclaimedMemory)
+    {
+        await _actionLogStore.AppendAsync(
+            _actionLogPath,
+            action,
+            target,
+            result,
+            reclaimedMemory,
+            CancellationToken.None);
     }
 }

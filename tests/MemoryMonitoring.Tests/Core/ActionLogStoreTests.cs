@@ -10,8 +10,8 @@ public sealed class ActionLogStoreTests
         var path = Path.GetTempFileName();
         var store = new ActionLogStore();
 
-        await store.AppendAsync(path, "trim", "chrome.exe", "ok", CancellationToken.None);
-        await store.AppendAsync(path, "standby", "system", "ok", CancellationToken.None);
+        await store.AppendAsync(path, "trim", "chrome.exe", "ok", "128 MB", CancellationToken.None);
+        await store.AppendAsync(path, "standby", "system", "ok", "256 MB", CancellationToken.None);
 
         var lines = await File.ReadAllLinesAsync(path);
 

@@ -14,6 +14,7 @@ public sealed class ActionLogStore
         string action,
         string target,
         string result,
+        string reclaimedMemory,
         CancellationToken cancellationToken)
     {
         var payload = JsonSerializer.Serialize(new
@@ -21,7 +22,8 @@ public sealed class ActionLogStore
             Timestamp = DateTimeOffset.Now,
             Action = action,
             Target = target,
-            Result = result
+            Result = result,
+            ReclaimedMemory = reclaimedMemory
         });
 
         await File.AppendAllTextAsync(path, payload + Environment.NewLine, cancellationToken);
