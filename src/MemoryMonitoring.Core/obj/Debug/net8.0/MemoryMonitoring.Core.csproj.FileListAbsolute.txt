@@ -1,0 +1,11 @@
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\bin\Debug\net8.0\MemoryMonitoring.Core.deps.json
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\bin\Debug\net8.0\MemoryMonitoring.Core.dll
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\bin\Debug\net8.0\MemoryMonitoring.Core.pdb
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.AssemblyInfoInputs.cache
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.AssemblyInfo.cs
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.csproj.CoreCompileInputs.cache
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.dll
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\refint\MemoryMonitoring.Core.dll
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\MemoryMonitoring.Core.pdb
+D:\persion_code\Memory Monitoring\src\MemoryMonitoring.Core\obj\Debug\net8.0\ref\MemoryMonitoring.Core.dll
