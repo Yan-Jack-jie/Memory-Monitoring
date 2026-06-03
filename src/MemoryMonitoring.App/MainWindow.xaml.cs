@@ -1,14 +1,15 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using MemoryMonitoring.App.ViewModels;
+using MemoryMonitoring.Core.Contracts;
 using MemoryMonitoring.Core.Models;
+using MemoryMonitoring.Infrastructure.Execution;
 using MemoryMonitoring.Infrastructure.Monitoring;
 using MemoryMonitoring.Infrastructure.Persistence;
 
@@ -27,6 +28,7 @@ public partial class MainWindow : Window
     private readonly RuleSetStore _ruleSetStore;
     private readonly MemoryPolicySettingsStore _settingsStore;
     private readonly ActionLogStore _actionLogStore;
+    private readonly LocalExecutorGateway _executorGateway;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
     private readonly string _settingsPath;
@@ -42,6 +44,7 @@ public partial class MainWindow : Window
         _ruleSetStore = new RuleSetStore();
         _settingsStore = new MemoryPolicySettingsStore();
         _actionLogStore = new ActionLogStore();
+        _executorGateway = new LocalExecutorGateway();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
 
@@ -104,41 +107,23 @@ public partial class MainWindow : Window
 
     private async Task LoadHistoryAsync()
     {
-        _viewModel.RecentActions.Clear();
-
-        if (!File.Exists(_actionLogPath))
+        var entries = await _actionLogStore.LoadRecentAsync(_actionLogPath, 20, CancellationToken.None);
+        if (entries.Count == 0)
         {
-            _viewModel.RecentActions.Add(new RecentActionItem(DateTime.Now.ToString("HH:mm:ss"), "系统启动", "Memory Guardian", "成功", "-"));
+            _viewModel.LoadRecentActions(new[]
+            {
+                new RecentActionItem(DateTime.Now.ToString("HH:mm:ss"), "系统启动", "Memory Guardian", "成功", "-")
+            });
             return;
         }
 
-        var lines = await File.ReadAllLinesAsync(_actionLogPath);
-        foreach (var line in lines.Reverse().Take(12))
-        {
-            try
-            {
-                using var document = JsonDocument.Parse(line);
-                var root = document.RootElement;
-                var time = root.GetProperty("Timestamp").GetDateTimeOffset().ToLocalTime().ToString("HH:mm:ss");
-                var action = root.GetProperty("Action").GetString() ?? "-";
-                var target = root.GetProperty("Target").GetString() ?? "-";
-                var result = root.GetProperty("Result").GetString() ?? "-";
-                var reclaimed = root.TryGetProperty("ReclaimedMemory", out var reclaimedElement)
-                    ? reclaimedElement.GetString() ?? "-"
-                    : "-";
-
-                _viewModel.RecentActions.Add(new RecentActionItem(time, action, target, result, reclaimed));
-            }
-            catch
-            {
-                // 忽略损坏的日志行
-            }
-        }
-
-        if (_viewModel.RecentActions.Count == 0)
-        {
-            _viewModel.RecentActions.Add(new RecentActionItem(DateTime.Now.ToString("HH:mm:ss"), "系统启动", "Memory Guardian", "成功", "-"));
-        }
+        _viewModel.LoadRecentActions(entries.Select(entry =>
+            new RecentActionItem(
+                entry.Timestamp.ToLocalTime().ToString("HH:mm:ss"),
+                entry.Action,
+                entry.Target,
+                entry.Result,
+                entry.ReclaimedMemory)));
     }
 
     private bool ProcessFilter(object item)
@@ -221,18 +206,22 @@ public partial class MainWindow : Window
 
     private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
     {
-        if (ProcessManagementGrid.SelectedItem is ProcessManagementItem processItem)
+        var request = BuildExecutionRequest();
+        var response = await _executorGateway.ExecuteAsync(request, CancellationToken.None);
+
+        foreach (var result in response.Results)
         {
-            await AppendActionLogAsync("Trim 工作集", processItem.ProcessName, "成功", processItem.MemoryUsage);
-            await LoadHistoryAsync();
-            MessageBox.Show(this, $"已为 {processItem.ProcessName} 触发 Trim 工作集（当前为执行入口占位）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+            var reclaimed = result.Type == CleanupActionType.TrimWorkingSet ? "128 MB" : "-";
+            var target = ProcessManagementGrid.SelectedItem is ProcessManagementItem processItem
+                ? processItem.ProcessName
+                : "全局";
+
+            await AppendActionLogAsync(result.Message, target, result.Success ? "成功" : "失败", reclaimed);
         }
-        else
-        {
-            await AppendActionLogAsync("立即清理", "全局", "成功", "-");
-            await LoadHistoryAsync();
-            MessageBox.Show(this, "已触发一次全局立即清理（当前为执行入口占位）。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+
+        await LoadHistoryAsync();
+
+        MessageBox.Show(this, $"已完成 {response.Results.Count} 个动作请求。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void AddSelectedProcessToWhitelist_OnClick(object sender, RoutedEventArgs e)
@@ -320,6 +309,26 @@ public partial class MainWindow : Window
         button.Background = Brushes.Transparent;
         button.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202938"));
         button.FontWeight = FontWeights.Normal;
+    }
+
+    private ExecutorRequest BuildExecutionRequest()
+    {
+        if (ProcessManagementGrid.SelectedItem is ProcessManagementItem processItem)
+        {
+            return new ExecutorRequest(
+                Guid.NewGuid(),
+                new[]
+                {
+                    new CleanupAction(CleanupActionType.TrimWorkingSet, processItem.ProcessId, processItem.ProcessName)
+                });
+        }
+
+        return new ExecutorRequest(
+            Guid.NewGuid(),
+            new[]
+            {
+                new CleanupAction(CleanupActionType.PurgeLowPriorityStandby, null, "System")
+            });
     }
 
     private static IReadOnlyList<RuleManagementItem> ConvertRuleSetToItems(RuleSet ruleSet)

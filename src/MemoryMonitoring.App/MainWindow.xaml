@@ -108,7 +108,7 @@
                         <Border Background="White" BorderBrush="#DDE7EF" BorderThickness="1" CornerRadius="12" Padding="16,10" Margin="0,0,12,0">
                             <TextBlock Foreground="#1E8E3E" FontWeight="SemiBold" Text="自动化：运行中" />
                         </Border>
-                        <Button Click="RunTrimAction_OnClick" Background="White" BorderBrush="#DDE7EF" BorderThickness="1" Padding="16,10" Margin="0" Cursor="Hand">
+                        <Button Click="RunTrimAction_OnClick" Background="White" BorderBrush="#DDE7EF" BorderThickness="1" Padding="16,10" Cursor="Hand">
                             <TextBlock Foreground="#202938" FontWeight="SemiBold" Text="立即清理" />
                         </Button>
                     </StackPanel>
@@ -170,15 +170,7 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock Style="{StaticResource SectionTitleStyle}" Text="内存占用 Top 进程" />
-                            <DataGrid Grid.Row="1"
-                                      Margin="0,16,0,0"
-                                      AutoGenerateColumns="False"
-                                      HeadersVisibility="Column"
-                                      CanUserAddRows="False"
-                                      IsReadOnly="True"
-                                      ItemsSource="{Binding TopProcesses}"
-                                      GridLinesVisibility="Horizontal"
-                                      BorderThickness="0">
+                            <DataGrid Grid.Row="1" Margin="0,16,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" ItemsSource="{Binding TopProcesses}" GridLinesVisibility="Horizontal" BorderThickness="0">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="进程" Binding="{Binding Process}" Width="*" />
                                     <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="80" />
@@ -199,18 +191,10 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock Style="{StaticResource SectionTitleStyle}" Text="最近操作" />
-                            <DataGrid Grid.Row="1"
-                                      Margin="0,16,0,0"
-                                      AutoGenerateColumns="False"
-                                      HeadersVisibility="Column"
-                                      CanUserAddRows="False"
-                                      IsReadOnly="True"
-                                      ItemsSource="{Binding RecentActions}"
-                                      GridLinesVisibility="Horizontal"
-                                      BorderThickness="0">
+                            <DataGrid Grid.Row="1" Margin="0,16,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" ItemsSource="{Binding RecentActions}" GridLinesVisibility="Horizontal" BorderThickness="0">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="90" />
-                                    <DataGridTextColumn Header="操作类型" Binding="{Binding Type}" Width="110" />
+                                    <DataGridTextColumn Header="操作类型" Binding="{Binding Type}" Width="140" />
                                     <DataGridTextColumn Header="目标" Binding="{Binding Target}" Width="*" />
                                     <DataGridTextColumn Header="结果" Binding="{Binding Result}" Width="70" />
                                     <DataGridTextColumn Header="回收内存" Binding="{Binding Reclaimed}" Width="90" />
@@ -238,18 +222,8 @@
                                 <ColumnDefinition Width="180" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="ProcessSearchBox"
-                                     Grid.Column="0"
-                                     Margin="0,0,16,0"
-                                     Padding="12,10"
-                                     VerticalContentAlignment="Center"
-                                     TextChanged="ProcessSearchBox_OnTextChanged" />
-                            <ComboBox x:Name="ProcessCategoryFilter"
-                                      Grid.Column="1"
-                                      Margin="0,0,16,0"
-                                      Padding="8"
-                                      SelectionChanged="ProcessCategoryFilter_OnSelectionChanged"
-                                      SelectedIndex="0">
+                            <TextBox x:Name="ProcessSearchBox" Grid.Column="0" Margin="0,0,16,0" Padding="12,10" VerticalContentAlignment="Center" TextChanged="ProcessSearchBox_OnTextChanged" />
+                            <ComboBox x:Name="ProcessCategoryFilter" Grid.Column="1" Margin="0,0,16,0" Padding="8" SelectionChanged="ProcessCategoryFilter_OnSelectionChanged" SelectedIndex="0">
                                 <ComboBoxItem Content="全部类别" />
                                 <ComboBoxItem Content="白名单" />
                                 <ComboBoxItem Content="仅清理" />
@@ -268,17 +242,7 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <TextBlock Style="{StaticResource SectionTitleStyle}" Text="进程列表" />
-                            <DataGrid x:Name="ProcessManagementGrid"
-                                      Grid.Row="1"
-                                      Margin="0,16,0,0"
-                                      AutoGenerateColumns="False"
-                                      HeadersVisibility="Column"
-                                      CanUserAddRows="False"
-                                      IsReadOnly="True"
-                                      SelectionChanged="ProcessManagementGrid_OnSelectionChanged"
-                                      ItemsSource="{Binding ProcessManagementItems}"
-                                      GridLinesVisibility="Horizontal"
-                                      BorderThickness="0">
+                            <DataGrid x:Name="ProcessManagementGrid" Grid.Row="1" Margin="0,16,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" SelectionChanged="ProcessManagementGrid_OnSelectionChanged" ItemsSource="{Binding ProcessManagementItems}" GridLinesVisibility="Horizontal" BorderThickness="0">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="进程名" Binding="{Binding ProcessName}" Width="*" />
                                     <DataGridTextColumn Header="PID" Binding="{Binding ProcessId}" Width="80" />
@@ -328,7 +292,7 @@
                                 <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="上次清理结果" />
                                 <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="动作：Trim 工作集" />
                                 <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="结果：成功" />
-                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="回收内存：512 MB" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="回收内存：128 MB" />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -388,17 +352,7 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Style="{StaticResource SectionTitleStyle}" Text="规则列表" />
-                                <DataGrid x:Name="RulesGrid"
-                                          Grid.Row="1"
-                                          Margin="0,16,0,0"
-                                          AutoGenerateColumns="False"
-                                          HeadersVisibility="Column"
-                                          CanUserAddRows="False"
-                                          IsReadOnly="True"
-                                          SelectionChanged="RulesGrid_OnSelectionChanged"
-                                          ItemsSource="{Binding RuleItems}"
-                                          GridLinesVisibility="Horizontal"
-                                          BorderThickness="0">
+                                <DataGrid x:Name="RulesGrid" Grid.Row="1" Margin="0,16,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" SelectionChanged="RulesGrid_OnSelectionChanged" ItemsSource="{Binding RuleItems}" GridLinesVisibility="Horizontal" BorderThickness="0">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="进程名称" Binding="{Binding ProcessName}" Width="*" />
                                         <DataGridTextColumn Header="匹配类型" Binding="{Binding MatchType}" Width="90" />
@@ -553,24 +507,87 @@
             <ScrollViewer x:Name="HistoryPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="历史记录" />
+                    <UniformGrid Margin="0,0,0,16" Rows="1" Columns="3">
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtleTextStyle}" Text="累计记录数" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#0E949E" Text="{Binding HistoryTotalActionsText}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtleTextStyle}" Text="成功次数" />
+                                <TextBlock Margin="0,10,0,0" FontSize="30" FontWeight="SemiBold" Foreground="#1E8E3E" Text="{Binding HistorySuccessCountText}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SubtleTextStyle}" Text="最近动作" />
+                                <TextBlock Margin="0,10,0,0" FontSize="24" FontWeight="SemiBold" Foreground="#202938" Text="{Binding HistoryLastActionText}" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
                     <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="历史与效果分析" />
-                            <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="此页已统一到当前桌面工具风格，后续会补充时间筛选、趋势叠加、动作日志和效果摘要。" />
-                        </StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource SectionTitleStyle}" Text="动作日志" />
+                            <DataGrid Grid.Row="1" Margin="0,16,0,0" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" ItemsSource="{Binding RecentActions}" GridLinesVisibility="Horizontal" BorderThickness="0">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="100" />
+                                    <DataGridTextColumn Header="动作" Binding="{Binding Type}" Width="160" />
+                                    <DataGridTextColumn Header="目标" Binding="{Binding Target}" Width="*" />
+                                    <DataGridTextColumn Header="结果" Binding="{Binding Result}" Width="80" />
+                                    <DataGridTextColumn Header="回收内存" Binding="{Binding Reclaimed}" Width="110" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
 
             <ScrollViewer x:Name="SettingsPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Margin="0,4,0,16" Style="{StaticResource SectionTitleStyle}" Text="设置" />
-                    <Border Style="{StaticResource CardStyle}">
-                        <StackPanel>
-                            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="通用与高级设置" />
-                            <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="此页已统一到前 3 页风格，后续会接入采样周期、日志、通知、托盘与权限设置。" />
-                        </StackPanel>
-                    </Border>
+                    <DockPanel Margin="0,4,0,16">
+                        <TextBlock Style="{StaticResource SectionTitleStyle}" Text="设置" />
+                        <Button DockPanel.Dock="Right" Click="SaveAutomationSettings_OnClick" Background="#0E949E" BorderBrush="#0E949E" Foreground="White" Padding="16,10" Cursor="Hand">
+                            <TextBlock Foreground="White" FontWeight="SemiBold" Text="保存设置" />
+                        </Button>
+                    </DockPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Margin="0,0,12,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="监控" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="内存阈值" />
+                                <TextBox Padding="12,10" Text="{Binding MemoryThresholdText, Mode=TwoWay}" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="可用内存阈值" />
+                                <TextBox Padding="12,10" Text="{Binding AvailableThresholdText, Mode=TwoWay}" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="持续高压时长" />
+                                <TextBox Padding="12,10" Text="{Binding SustainedPressureText, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="延迟与冷却" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="启动延迟" />
+                                <TextBox Padding="12,10" Text="{Binding StartupDelayText, Mode=TwoWay}" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="唤醒后延迟" />
+                                <TextBox Padding="12,10" Text="{Binding ResumeDelayText, Mode=TwoWay}" />
+                                <TextBlock Margin="0,16,0,8" Style="{StaticResource SubtleTextStyle}" Text="全局冷却时间" />
+                                <TextBox Padding="12,10" Text="{Binding CooldownText, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

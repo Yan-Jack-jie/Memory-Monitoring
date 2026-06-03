@@ -40,6 +40,9 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     private string _selectedRuleCategoryName = "平衡";
     private string _selectedRuleCooldown = "5 分钟";
     private string _selectedRuleNotes = "浏览器，允许降级和 Trim，避免直接挂起。";
+    private string _historyTotalActionsText = "0";
+    private string _historySuccessCountText = "0";
+    private string _historyLastActionText = "-";
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -227,6 +230,24 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         set => SetField(ref _selectedRuleNotes, value);
     }
 
+    public string HistoryTotalActionsText
+    {
+        get => _historyTotalActionsText;
+        private set => SetField(ref _historyTotalActionsText, value);
+    }
+
+    public string HistorySuccessCountText
+    {
+        get => _historySuccessCountText;
+        private set => SetField(ref _historySuccessCountText, value);
+    }
+
+    public string HistoryLastActionText
+    {
+        get => _historyLastActionText;
+        private set => SetField(ref _historyLastActionText, value);
+    }
+
     public void Update(SystemMemorySnapshot snapshot, IReadOnlyList<ProcessMemorySnapshot>? processSnapshots = null)
     {
         MemoryLoadText = $"{snapshot.MemoryLoadPercent}%";
@@ -377,6 +398,20 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     }
 
     public IEnumerable<RuleManagementItem> ExportRules() => RuleItems.ToArray();
+
+    public void LoadRecentActions(IEnumerable<RecentActionItem> items)
+    {
+        RecentActions.Clear();
+
+        foreach (var item in items)
+        {
+            RecentActions.Add(item);
+        }
+
+        HistoryTotalActionsText = RecentActions.Count.ToString();
+        HistorySuccessCountText = RecentActions.Count(item => item.Result == "成功").ToString();
+        HistoryLastActionText = RecentActions.FirstOrDefault()?.Type ?? "-";
+    }
 
     private void UpdateRuleCounts()
     {
