@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MemoryMonitoring.Core\MemoryMonitoring.Core.csproj" />
+    <ProjectReference Include="..\..\src\MemoryMonitoring.App\MemoryMonitoring.App.csproj" />
+    <ProjectReference Include="..\..\src\MemoryMonitoring.Infrastructure\MemoryMonitoring.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

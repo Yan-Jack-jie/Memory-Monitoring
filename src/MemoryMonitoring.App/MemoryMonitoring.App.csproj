@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MemoryMonitoring.Core\MemoryMonitoring.Core.csproj" />
+    <ProjectReference Include="..\MemoryMonitoring.Infrastructure\MemoryMonitoring.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,12 +1,183 @@
-﻿<Window x:Class="MemoryMonitoring.App.MainWindow"
+<Window x:Class="MemoryMonitoring.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MemoryMonitoring.App"
+        xmlns:controls="clr-namespace:MemoryMonitoring.App.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Memory Guardian"
+        Width="1560"
+        Height="980"
+        MinWidth="1360"
+        MinHeight="860"
+        Background="#F6F9FC"
+        WindowStartupLocation="CenterScreen">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="216" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <Border Background="#FCFEFF" BorderBrush="#E7EEF5" BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="72" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="140" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Margin="24,0,24,0" VerticalAlignment="Center">
+                    <Border Width="32" Height="32" Background="#0E949E" CornerRadius="10">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White" Text="🛡" />
+                    </Border>
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="#202938" Text="Memory Guardian" />
+                </DockPanel>
+
+                <StackPanel Grid.Row="1" Margin="8,12,8,0">
+                    <Border Background="#0E949E" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="White" FontSize="18" FontWeight="SemiBold" Text="仪表盘" />
+                    </Border>
+                    <Border Background="Transparent" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="#202938" FontSize="18" Text="进程管理" />
+                    </Border>
+                    <Border Background="Transparent" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="#202938" FontSize="18" Text="规则管理" />
+                    </Border>
+                    <Border Background="Transparent" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="#202938" FontSize="18" Text="自动化" />
+                    </Border>
+                    <Border Background="Transparent" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="#202938" FontSize="18" Text="历史记录" />
+                    </Border>
+                    <Border Background="Transparent" CornerRadius="12" Padding="18,14" Margin="8,0,8,10">
+                        <TextBlock Foreground="#202938" FontSize="18" Text="设置" />
+                    </Border>
+                </StackPanel>
+
+                <Border Grid.Row="2" Margin="16" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="16">
+                    <StackPanel>
+                        <TextBlock Foreground="#202938" FontSize="18" FontWeight="SemiBold" Text="服务运行中" />
+                        <TextBlock Margin="0,12,0,0" Foreground="#6B778C" FontSize="14" Text="v1.3.0.0" />
+                        <StackPanel Margin="0,18,0,0" Orientation="Horizontal">
+                            <Border Width="44" Height="44" Margin="0,0,12,0" Background="#F2F6FA" CornerRadius="12" />
+                            <Border Width="44" Height="44" Margin="0,0,12,0" Background="#F2F6FA" CornerRadius="12" />
+                            <Border Width="44" Height="44" Background="#F2F6FA" CornerRadius="12" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="0,4,0,16">
+                <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="#202938" Text="仪表盘" />
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Border Background="White" BorderBrush="#DDE7EF" BorderThickness="1" CornerRadius="12" Padding="16,10" Margin="0,0,12,0">
+                        <TextBlock Foreground="#1E8E3E" FontWeight="SemiBold" Text="自动化：运行中" />
+                    </Border>
+                    <Border Background="White" BorderBrush="#DDE7EF" BorderThickness="1" CornerRadius="12" Padding="16,10">
+                        <TextBlock Foreground="#202938" FontWeight="SemiBold" Text="立即清理" />
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+
+            <UniformGrid Grid.Row="1" Margin="0,0,0,16" Rows="1" Columns="6">
+                <Border Margin="0,0,12,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="内存使用率" />
+                        <TextBlock Margin="0,8,0,6" FontSize="34" FontWeight="SemiBold" Foreground="#0E949E" Text="{Binding MemoryLoadText}" />
+                        <ProgressBar Height="8" Value="68" Maximum="100" Foreground="#0E949E" Background="#E4ECF2" />
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,12,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="可用内存" />
+                        <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#2C9B43" Text="{Binding AvailableMemoryText}" />
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,12,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="提交使用量" />
+                        <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#4169E1" Text="{Binding CommitUsageText}" />
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,12,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="系统缓存" />
+                        <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#5B6C8D" Text="{Binding CacheUsageText}" />
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,12,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="状态" />
+                        <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#2C9B43" Text="{Binding StatusText}" />
+                    </StackPanel>
+                </Border>
+                <Border Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Foreground="#6B778C" FontSize="14" Text="自动化状态" />
+                        <TextBlock Margin="0,8,0,0" FontSize="28" FontWeight="SemiBold" Foreground="#1E8E3E" Text="{Binding AutomationStatusText}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <controls:MemoryTrendControl Grid.Row="2" Margin="0,0,0,16" />
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.05*" />
+                    <ColumnDefinition Width="1.05*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Margin="0,0,10,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="#202938" Text="内存占用 Top 进程" />
+                            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="#1777C7" Text="查看全部" />
+                        </DockPanel>
+                        <DataGrid Grid.Row="1"
+                                  Margin="0,16,0,0"
+                                  AutoGenerateColumns="False"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  BorderThickness="0" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Margin="10,0,0,0" Background="White" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="#202938" Text="最近操作" />
+                            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="#1777C7" Text="查看全部" />
+                        </DockPanel>
+                        <DataGrid Grid.Row="1"
+                                  Margin="0,16,0,0"
+                                  AutoGenerateColumns="False"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  BorderThickness="0" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

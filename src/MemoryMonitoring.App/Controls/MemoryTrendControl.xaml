@@ -1,0 +1,51 @@
+<UserControl x:Class="MemoryMonitoring.App.Controls.MemoryTrendControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="240"
+             d:DesignWidth="600">
+    <Border Background="#FFFFFFFF" BorderBrush="#E6EDF3" BorderThickness="1" CornerRadius="16" Padding="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <DockPanel>
+                <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="#202938" Text="内存使用趋势" />
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Border Margin="8,0,0,0" Background="#0E949E" CornerRadius="8" Padding="12,6">
+                        <TextBlock Foreground="White" Text="30 分钟" />
+                    </Border>
+                    <Border Margin="8,0,0,0" Background="#F8FAFC" BorderBrush="#D7E0E8" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                        <TextBlock Foreground="#425466" Text="6 小时" />
+                    </Border>
+                    <Border Margin="8,0,0,0" Background="#F8FAFC" BorderBrush="#D7E0E8" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                        <TextBlock Foreground="#425466" Text="24 小时" />
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+
+            <Grid Grid.Row="1" Margin="0,20,0,12">
+                <Border Background="#F7FCFD" CornerRadius="14" />
+                <Canvas>
+                    <Polyline Points="10,120 80,110 150,90 220,96 290,70 360,76 430,58 500,88 570,84 640,62 710,68 780,60"
+                              Stroke="#0E949E"
+                              StrokeThickness="3" />
+                    <Line X1="500" Y1="20" X2="500" Y2="160" Stroke="#0E949E" StrokeDashArray="4,4" />
+                    <Line X1="250" Y1="30" X2="780" Y2="30" Stroke="#EF4444" StrokeDashArray="6,6" />
+                    <Line X1="250" Y1="70" X2="780" Y2="70" Stroke="#F59E0B" StrokeDashArray="6,6" />
+                </Canvas>
+            </Grid>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <TextBlock Foreground="#0E949E" Margin="0,0,20,0" Text="━ 内存使用率" />
+                <TextBlock Foreground="#EF4444" Margin="0,0,20,0" Text="- - 清理阈值 (80%)" />
+                <TextBlock Foreground="#F59E0B" Text="- - 警告阈值 (60%)" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
