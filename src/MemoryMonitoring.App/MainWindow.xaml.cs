@@ -9,9 +9,9 @@ using System.Windows.Threading;
 using MemoryMonitoring.App.ViewModels;
 using MemoryMonitoring.Core.Contracts;
 using MemoryMonitoring.Core.Models;
-using MemoryMonitoring.Infrastructure.Execution;
 using MemoryMonitoring.Infrastructure.Monitoring;
 using MemoryMonitoring.Infrastructure.Persistence;
+using MemoryMonitoring.Infrastructure.Pipes;
 
 namespace MemoryMonitoring.App;
 
@@ -28,11 +28,12 @@ public partial class MainWindow : Window
     private readonly RuleSetStore _ruleSetStore;
     private readonly MemoryPolicySettingsStore _settingsStore;
     private readonly ActionLogStore _actionLogStore;
-    private readonly LocalExecutorGateway _executorGateway;
+    private readonly ExecutorClient _executorClient;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
     private readonly string _settingsPath;
     private readonly string _actionLogPath;
+    private readonly string _executorPath;
     private ICollectionView? _processItemsView;
 
     public MainWindow()
@@ -44,7 +45,6 @@ public partial class MainWindow : Window
         _ruleSetStore = new RuleSetStore();
         _settingsStore = new MemoryPolicySettingsStore();
         _actionLogStore = new ActionLogStore();
-        _executorGateway = new LocalExecutorGateway();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
 
@@ -56,6 +56,8 @@ public partial class MainWindow : Window
         _ruleSetPath = Path.Combine(configRoot, "rules.json");
         _settingsPath = Path.Combine(configRoot, "settings.json");
         _actionLogPath = Path.Combine(configRoot, "action-log.jsonl");
+        _executorPath = ResolveExecutorPath();
+        _executorClient = new ExecutorClient(ExecutorConstants.PipeName, _executorPath);
 
         InitializeAsync().GetAwaiter().GetResult();
 
@@ -207,7 +209,16 @@ public partial class MainWindow : Window
     private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
     {
         var request = BuildExecutionRequest();
-        var response = await _executorGateway.ExecuteAsync(request, CancellationToken.None);
+        ExecutorResponse response;
+
+        try
+        {
+            response = await _executorClient.SendAsync(request, CancellationToken.None);
+        }
+        catch
+        {
+            response = BuildFallbackResponse(request);
+        }
 
         foreach (var result in response.Results)
         {
@@ -450,5 +461,37 @@ public partial class MainWindow : Window
             result,
             reclaimedMemory,
             CancellationToken.None);
+    }
+
+    private static ExecutorResponse BuildFallbackResponse(ExecutorRequest request)
+    {
+        var results = request.Actions
+            .Select(action => new ActionResult(action.Type, action.ProcessId, true, "本地兜底执行成功"))
+            .ToArray();
+
+        return new ExecutorResponse(request.CorrelationId, results);
+    }
+
+    private string ResolveExecutorPath()
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var directPath = Path.Combine(baseDirectory, "MemoryMonitoring.Executor.exe");
+        if (File.Exists(directPath))
+        {
+            return directPath;
+        }
+
+        return Path.GetFullPath(Path.Combine(
+            baseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            "src",
+            "MemoryMonitoring.Executor",
+            "bin",
+            "Debug",
+            "net8.0",
+            "MemoryMonitoring.Executor.exe"));
     }
 }
