@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\src\MemoryMonitoring.Core\MemoryMonitoring.Core.csproj" />
     <ProjectReference Include="..\..\src\MemoryMonitoring.App\MemoryMonitoring.App.csproj" />
     <ProjectReference Include="..\..\src\MemoryMonitoring.Infrastructure\MemoryMonitoring.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\MemoryMonitoring.Executor\MemoryMonitoring.Executor.csproj" />
   </ItemGroup>
 
 </Project>

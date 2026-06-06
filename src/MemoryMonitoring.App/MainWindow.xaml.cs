@@ -466,7 +466,7 @@ public partial class MainWindow : Window
     private static ExecutorResponse BuildFallbackResponse(ExecutorRequest request)
     {
         var results = request.Actions
-            .Select(action => new ActionResult(action.Type, action.ProcessId, true, "本地兜底执行成功"))
+            .Select(action => new ActionResult(action.Type, action.ProcessId, false, "执行器不可用，未执行清理动作"))
             .ToArray();
 
         return new ExecutorResponse(request.CorrelationId, results);
