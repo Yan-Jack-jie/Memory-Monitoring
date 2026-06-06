@@ -12,6 +12,7 @@ using MemoryMonitoring.Core.Models;
 using MemoryMonitoring.Infrastructure.Monitoring;
 using MemoryMonitoring.Infrastructure.Persistence;
 using MemoryMonitoring.Infrastructure.Pipes;
+using MemoryMonitoring.Infrastructure.Power;
 
 namespace MemoryMonitoring.App;
 
@@ -29,6 +30,9 @@ public partial class MainWindow : Window
     private readonly MemoryPolicySettingsStore _settingsStore;
     private readonly ActionLogStore _actionLogStore;
     private readonly ExecutorClient _executorClient;
+    private readonly PowerModeBridge _powerModeBridge;
+    private readonly DelayedCleanupScheduler _delayedCleanupScheduler;
+    private readonly CancellationTokenSource _lifetimeCts;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
     private readonly string _settingsPath;
@@ -45,6 +49,9 @@ public partial class MainWindow : Window
         _ruleSetStore = new RuleSetStore();
         _settingsStore = new MemoryPolicySettingsStore();
         _actionLogStore = new ActionLogStore();
+        _powerModeBridge = new PowerModeBridge();
+        _delayedCleanupScheduler = new DelayedCleanupScheduler(_powerModeBridge);
+        _lifetimeCts = new CancellationTokenSource();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
 
@@ -70,12 +77,15 @@ public partial class MainWindow : Window
         };
         _refreshTimer.Tick += (_, _) => RefreshDashboard();
         _refreshTimer.Start();
+        Closed += MainWindow_OnClosed;
     }
 
     private async Task InitializeAsync()
     {
         var settings = await _settingsStore.LoadAsync(_settingsPath, CancellationToken.None);
         _viewModel.LoadDefaultAutomationSettings(settings);
+        _delayedCleanupScheduler.ConfigureResumeCleanup(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
+        _ = _delayedCleanupScheduler.ScheduleStartupAsync(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
 
         var rules = await _ruleSetStore.LoadAsync(_ruleSetPath, CancellationToken.None);
         if (rules.WhiteList.Count == 0 && rules.TrimOnly.Count == 0 && rules.SuspendEligible.Count == 0)
@@ -105,6 +115,14 @@ public partial class MainWindow : Window
         {
             // 采样失败时保持上一轮数据，避免界面闪烁。
         }
+    }
+
+    private void MainWindow_OnClosed(object? sender, EventArgs e)
+    {
+        _refreshTimer.Stop();
+        _lifetimeCts.Cancel();
+        _powerModeBridge.Dispose();
+        _lifetimeCts.Dispose();
     }
 
     private async Task LoadHistoryAsync()
@@ -209,16 +227,7 @@ public partial class MainWindow : Window
     private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
     {
         var request = BuildExecutionRequest();
-        ExecutorResponse response;
-
-        try
-        {
-            response = await _executorClient.SendAsync(request, CancellationToken.None);
-        }
-        catch
-        {
-            response = BuildFallbackResponse(request);
-        }
+        var response = await ExecuteRequestAsync(request, CancellationToken.None);
 
         foreach (var result in response.Results)
         {
@@ -233,6 +242,36 @@ public partial class MainWindow : Window
         await LoadHistoryAsync();
 
         MessageBox.Show(this, $"已完成 {response.Results.Count} 个动作请求。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private async Task RunScheduledSoftCleanupAsync(CancellationToken cancellationToken)
+    {
+        var request = new ExecutorRequest(
+            Guid.NewGuid(),
+            new[]
+            {
+                new CleanupAction(CleanupActionType.PurgeLowPriorityStandby, null, "System")
+            });
+        var response = await ExecuteRequestAsync(request, cancellationToken);
+
+        foreach (var result in response.Results)
+        {
+            await AppendActionLogAsync(result.Message, "System", result.Success ? "成功" : "失败", "-");
+        }
+
+        await Dispatcher.InvokeAsync(async () => await LoadHistoryAsync());
+    }
+
+    private async Task<ExecutorResponse> ExecuteRequestAsync(ExecutorRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _executorClient.SendAsync(request, cancellationToken);
+        }
+        catch
+        {
+            return BuildFallbackResponse(request);
+        }
     }
 
     private async void AddSelectedProcessToWhitelist_OnClick(object sender, RoutedEventArgs e)

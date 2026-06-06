@@ -40,7 +40,7 @@ public sealed class ActionLogStore
         var lines = await File.ReadAllLinesAsync(path, cancellationToken);
         var entries = new List<ActionLogEntry>();
 
-        foreach (var line in lines.Reverse().Take(take))
+        foreach (var line in lines.Reverse())
         {
             try
             {
@@ -55,6 +55,11 @@ public sealed class ActionLogStore
                     root.TryGetProperty("ReclaimedMemory", out var reclaimedElement)
                         ? reclaimedElement.GetString() ?? "-"
                         : "-"));
+
+                if (entries.Count >= take)
+                {
+                    break;
+                }
             }
             catch
             {
