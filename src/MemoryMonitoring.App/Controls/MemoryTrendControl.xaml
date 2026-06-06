@@ -29,10 +29,10 @@
                 </StackPanel>
             </DockPanel>
 
-            <Grid Grid.Row="1" Margin="0,20,0,12">
+            <Grid x:Name="ChartHost" Grid.Row="1" Margin="0,20,0,12" SizeChanged="ChartHost_OnSizeChanged">
                 <Border Background="#F7FCFD" CornerRadius="14" />
                 <Canvas>
-                    <Polyline Points="10,120 80,110 150,90 220,96 290,70 360,76 430,58 500,88 570,84 640,62 710,68 780,60"
+                    <Polyline x:Name="MemoryUsageLine"
                               Stroke="#0E949E"
                               StrokeThickness="3" />
                     <Line X1="500" Y1="20" X2="500" Y2="160" Stroke="#0E949E" StrokeDashArray="4,4" />

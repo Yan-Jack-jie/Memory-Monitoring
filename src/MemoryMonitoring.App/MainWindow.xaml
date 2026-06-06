@@ -155,7 +155,7 @@
                     </Border>
                 </UniformGrid>
 
-                <controls:MemoryTrendControl Grid.Row="2" Margin="0,0,0,16" />
+                <controls:MemoryTrendControl Grid.Row="2" Margin="0,0,0,16" ItemsSource="{Binding MemoryHistory}" />
 
                 <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>

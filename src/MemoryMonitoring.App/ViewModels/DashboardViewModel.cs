@@ -12,6 +12,7 @@ namespace MemoryMonitoring.App.ViewModels;
 /// </summary>
 public sealed class DashboardViewModel : INotifyPropertyChanged
 {
+    private const int MemoryHistoryCapacity = 120;
     private string _memoryLoadText = "0%";
     private string _availableMemoryText = "0 MB";
     private string _commitUsageText = "0 GB";
@@ -52,6 +53,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         RecentActions = new ObservableCollection<RecentActionItem>();
         ProcessManagementItems = new ObservableCollection<ProcessManagementItem>();
         RuleItems = new ObservableCollection<RuleManagementItem>();
+        MemoryHistory = new ObservableCollection<MemoryHistoryPoint>();
     }
 
     public ObservableCollection<ProcessOverviewItem> TopProcesses { get; }
@@ -61,6 +63,8 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     public ObservableCollection<ProcessManagementItem> ProcessManagementItems { get; }
 
     public ObservableCollection<RuleManagementItem> RuleItems { get; }
+
+    public ObservableCollection<MemoryHistoryPoint> MemoryHistory { get; }
 
     public string MemoryLoadText
     {
@@ -258,6 +262,8 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         StatusText = snapshot.MemoryLoadPercent >= 85 ? "告急" : snapshot.MemoryLoadPercent >= 65 ? "警戒" : "健康";
         MemorySubtitleText = $"可用物理内存 {snapshot.AvailableMemoryMb / 1024d:F1} GB";
 
+        AppendMemoryHistory(snapshot);
+
         if (processSnapshots is not null)
         {
             TopProcesses.Clear();
@@ -419,6 +425,20 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         TrimOnlyCountText = RuleItems.Count(item => item.Category == "仅清理").ToString();
         BalancedCountText = RuleItems.Count(item => item.Category == "平衡").ToString();
         SuspendEligibleCountText = RuleItems.Count(item => item.Category == "可挂起").ToString();
+    }
+
+    private void AppendMemoryHistory(SystemMemorySnapshot snapshot)
+    {
+        MemoryHistory.Add(new MemoryHistoryPoint(
+            snapshot.Timestamp,
+            snapshot.MemoryLoadPercent,
+            snapshot.AvailableMemoryMb,
+            snapshot.CommitUsedMb));
+
+        while (MemoryHistory.Count > MemoryHistoryCapacity)
+        {
+            MemoryHistory.RemoveAt(0);
+        }
     }
 
     private static string InferRuleCategory(string processName)
