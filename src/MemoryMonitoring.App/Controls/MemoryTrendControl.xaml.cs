@@ -12,7 +12,7 @@ namespace MemoryMonitoring.App.Controls;
 /// 作者：OpenAI Codex
 /// 版本：1.0
 /// </summary>
-public partial class MemoryTrendControl : UserControl
+public partial class MemoryTrendControl : System.Windows.Controls.UserControl
 {
     public static readonly DependencyProperty ItemsSourceProperty =
         DependencyProperty.Register(
@@ -97,7 +97,7 @@ public partial class MemoryTrendControl : UserControl
             var usedPercent = Math.Clamp(history[index].UsedPercent, 0, 100);
             var x = horizontalPadding + drawableWidth * index / denominator;
             var y = verticalPadding + drawableHeight * (100 - usedPercent) / 100d;
-            collection.Add(new Point(x, y));
+            collection.Add(new System.Windows.Point(x, y));
         }
 
         return collection;

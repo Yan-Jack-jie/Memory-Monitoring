@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using MemoryMonitoring.App.Tray;
 using MemoryMonitoring.App.ViewModels;
 using MemoryMonitoring.Core.Contracts;
 using MemoryMonitoring.Core.Models;
@@ -35,6 +36,7 @@ public partial class MainWindow : Window
     private MemoryPressureCleanupScheduler? _pressureCleanupScheduler;
     private readonly PowerModeBridge _powerModeBridge;
     private readonly DelayedCleanupScheduler _delayedCleanupScheduler;
+    private readonly TrayHost _trayHost;
     private readonly CancellationTokenSource _lifetimeCts;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
@@ -55,6 +57,9 @@ public partial class MainWindow : Window
         _cleanupPlanBuilder = new CleanupPlanBuilder();
         _powerModeBridge = new PowerModeBridge();
         _delayedCleanupScheduler = new DelayedCleanupScheduler(_powerModeBridge);
+        _trayHost = new TrayHost();
+        _trayHost.RestoreRequested += TrayHost_OnRestoreRequested;
+        _trayHost.ExitRequested += TrayHost_OnExitRequested;
         _lifetimeCts = new CancellationTokenSource();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
@@ -81,6 +86,8 @@ public partial class MainWindow : Window
         };
         _refreshTimer.Tick += (_, _) => RefreshDashboard();
         _refreshTimer.Start();
+        _trayHost.Initialize();
+        StateChanged += MainWindow_OnStateChanged;
         Closed += MainWindow_OnClosed;
     }
 
@@ -127,9 +134,29 @@ public partial class MainWindow : Window
     {
         _refreshTimer.Stop();
         _lifetimeCts.Cancel();
+        _trayHost.RestoreRequested -= TrayHost_OnRestoreRequested;
+        _trayHost.ExitRequested -= TrayHost_OnExitRequested;
+        _trayHost.Dispose();
         _powerModeBridge.Dispose();
         _lifetimeCts.Dispose();
     }
+
+    private void MainWindow_OnStateChanged(object? sender, EventArgs e)
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            Hide();
+        }
+    }
+
+    private void TrayHost_OnRestoreRequested(object? sender, EventArgs e)
+    {
+        Show();
+        WindowState = WindowState.Normal;
+        Activate();
+    }
+
+    private void TrayHost_OnExitRequested(object? sender, EventArgs e) => Close();
 
     private async Task LoadHistoryAsync()
     {
@@ -205,7 +232,7 @@ public partial class MainWindow : Window
         await AppendActionLogAsync("保存规则", "rules.json", "成功", "-");
         await LoadHistoryAsync();
 
-        MessageBox.Show(this, "规则已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(this, "规则已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private void ApplyRuleEditor_OnClick(object sender, RoutedEventArgs e)
@@ -219,7 +246,7 @@ public partial class MainWindow : Window
         var settings = TryBuildSettingsFromInputs();
         if (settings is null)
         {
-            MessageBox.Show(this, "自动化策略填写格式无效，请使用“数字 + 单位”的形式，例如“85 %”或“60 秒”。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show(this, "自动化策略填写格式无效，请使用“数字 + 单位”的形式，例如“85 %”或“60 秒”。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
@@ -229,7 +256,7 @@ public partial class MainWindow : Window
         await AppendActionLogAsync("保存策略", "settings.json", "成功", "-");
         await LoadHistoryAsync();
 
-        MessageBox.Show(this, "自动化策略已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(this, "自动化策略已保存。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
@@ -249,7 +276,7 @@ public partial class MainWindow : Window
 
         await LoadHistoryAsync();
 
-        MessageBox.Show(this, $"已完成 {response.Results.Count} 个动作请求。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(this, $"已完成 {response.Results.Count} 个动作请求。", "Memory Guardian", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async Task RunScheduledSoftCleanupAsync(CancellationToken cancellationToken)
@@ -360,7 +387,7 @@ public partial class MainWindow : Window
 
     private void SettingsNavButton_OnClick(object sender, RoutedEventArgs e) => ActivatePage(SettingsPage, SettingsNavButton);
 
-    private void ActivatePage(UIElement targetPage, Button activeButton)
+    private void ActivatePage(UIElement targetPage, System.Windows.Controls.Button activeButton)
     {
         DashboardPage.Visibility = Visibility.Collapsed;
         ProcessesPage.Visibility = Visibility.Collapsed;
@@ -378,15 +405,15 @@ public partial class MainWindow : Window
         ResetNavStyle(HistoryNavButton);
         ResetNavStyle(SettingsNavButton);
 
-        activeButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0E949E"));
-        activeButton.Foreground = Brushes.White;
+        activeButton.Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0E949E"));
+        activeButton.Foreground = System.Windows.Media.Brushes.White;
         activeButton.FontWeight = FontWeights.SemiBold;
     }
 
-    private static void ResetNavStyle(Button button)
+    private static void ResetNavStyle(System.Windows.Controls.Button button)
     {
-        button.Background = Brushes.Transparent;
-        button.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202938"));
+        button.Background = System.Windows.Media.Brushes.Transparent;
+        button.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#202938"));
         button.FontWeight = FontWeights.Normal;
     }
 
