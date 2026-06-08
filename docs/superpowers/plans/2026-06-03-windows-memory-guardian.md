@@ -58,7 +58,7 @@
 - Create: `tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj`
 - Create: `tests/MemoryMonitoring.Tests/Core/RuleDefaultsTests.cs`
 
-- [ ] **Step 1: 初始化解决方案与项目骨架**
+- [x] **Step 1: 初始化解决方案与项目骨架**
 
 Run:
 
@@ -80,7 +80,7 @@ dotnet add tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj reference 
 
 Expected: 所有项目被加入解决方案，`dotnet sln list` 能看到 5 个项目。
 
-- [ ] **Step 2: 写领域模型的失败测试**
+- [x] **Step 2: 写领域模型的失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/RuleDefaultsTests.cs`
 
@@ -114,7 +114,7 @@ public sealed class RuleDefaultsTests
 }
 ```
 
-- [ ] **Step 3: 运行测试，确认失败**
+- [x] **Step 3: 运行测试，确认失败**
 
 Run:
 
@@ -124,7 +124,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `MemoryMonitoring.Core.Models` 中类型不存在。
 
-- [ ] **Step 4: 写最小实现**
+- [x] **Step 4: 写最小实现**
 
 `src/MemoryMonitoring.Core/Models/ProcessTreatment.cs`
 
@@ -183,7 +183,7 @@ public sealed record MemoryPolicySettings(
 }
 ```
 
-- [ ] **Step 5: 运行测试，确认通过**
+- [x] **Step 5: 运行测试，确认通过**
 
 Run:
 
@@ -193,7 +193,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add MemoryMonitoring.sln README.md src/MemoryMonitoring.Core tests/MemoryMonitoring.Tests
@@ -211,7 +211,7 @@ git commit -m "feat: bootstrap solution and core policy models"
 - Create: `tests/MemoryMonitoring.Tests/Core/RingHistoryBufferTests.cs`
 - Create: `tests/MemoryMonitoring.Tests/Core/PressureEvaluatorTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/RingHistoryBufferTests.cs`
 
@@ -275,7 +275,7 @@ public sealed class PressureEvaluatorTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -285,7 +285,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `RingHistoryBuffer`、`PressureEvaluator`、`SystemMemorySnapshot` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Core/Models/SystemMemorySnapshot.cs`
 
@@ -399,7 +399,7 @@ public sealed class PressureEvaluator
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -409,7 +409,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add src/MemoryMonitoring.Core tests/MemoryMonitoring.Tests
@@ -424,7 +424,7 @@ git commit -m "feat: add lightweight history buffer and pressure evaluator"
 - Create: `src/MemoryMonitoring.Infrastructure/Persistence/RuleSetStore.cs`
 - Create: `tests/MemoryMonitoring.Tests/Core/ProcessClassifierTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/ProcessClassifierTests.cs`
 
@@ -454,7 +454,7 @@ public sealed class ProcessClassifierTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -464,7 +464,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `RuleSet` 和 `ProcessClassifier` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Core/Models/RuleSet.cs`
 
@@ -559,7 +559,7 @@ public sealed class RuleSetStore
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -569,7 +569,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add src/MemoryMonitoring.Core src/MemoryMonitoring.Infrastructure tests/MemoryMonitoring.Tests
@@ -585,7 +585,7 @@ git commit -m "feat: add rule persistence and process classification"
 - Create: `src/MemoryMonitoring.Infrastructure/Pipes/ExecutorClient.cs`
 - Create: `tests/MemoryMonitoring.Tests/Core/ExecutorContractTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/ExecutorContractTests.cs`
 
@@ -617,7 +617,7 @@ public sealed class ExecutorContractTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -627,7 +627,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `ExecutorRequest`、`CleanupAction` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Core/Contracts/CleanupActionType.cs`
 
@@ -719,7 +719,7 @@ public sealed class ExecutorClient
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -729,7 +729,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add src/MemoryMonitoring.Core src/MemoryMonitoring.Infrastructure tests/MemoryMonitoring.Tests
@@ -746,7 +746,7 @@ git commit -m "feat: add executor contracts and pipe client"
 - Create: `src/MemoryMonitoring.Executor/Program.cs`
 - Create: `tests/MemoryMonitoring.Tests/Core/CleanupPlanBuilderTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/CleanupPlanBuilderTests.cs`
 
@@ -777,7 +777,7 @@ public sealed class CleanupPlanBuilderTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -787,7 +787,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `CleanupPlanBuilder` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Core/Policies/CleanupPlanBuilder.cs`
 
@@ -899,7 +899,7 @@ var response = executor.Execute(sample);
 Console.WriteLine($"Executor ready: {response.CorrelationId}");
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -909,7 +909,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 构建执行器，确认可编译**
+- [x] **Step 5: 构建执行器，确认可编译**
 
 Run:
 
@@ -919,7 +919,7 @@ dotnet build src/MemoryMonitoring.Executor/MemoryMonitoring.Executor.csproj
 
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add src/MemoryMonitoring.Core src/MemoryMonitoring.Executor tests/MemoryMonitoring.Tests
@@ -935,7 +935,7 @@ git commit -m "feat: add cleanup plan builder and executor action layer"
 - Create: `src/MemoryMonitoring.Infrastructure/Monitoring/ProcessMemorySampler.cs`
 - Create: `tests/MemoryMonitoring.Tests/Core/AutomationOrchestratorTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/AutomationOrchestratorTests.cs`
 
@@ -965,7 +965,7 @@ public sealed class AutomationOrchestratorTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -975,7 +975,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `AutomationOrchestrator` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Core/Models/ProcessMemorySnapshot.cs`
 
@@ -1057,7 +1057,7 @@ public sealed class ProcessMemorySampler
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -1067,7 +1067,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add src/MemoryMonitoring.Core src/MemoryMonitoring.Infrastructure tests/MemoryMonitoring.Tests
@@ -1085,7 +1085,7 @@ git commit -m "feat: add automation orchestrator and sampling service skeletons"
 - Create: `src/MemoryMonitoring.App/Tray/TrayHost.cs`
 - Create: `tests/MemoryMonitoring.Tests/App/DashboardViewModelTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/App/DashboardViewModelTests.cs`
 
@@ -1115,7 +1115,7 @@ public sealed class DashboardViewModelTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -1126,7 +1126,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `DashboardViewModel` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.App/ViewModels/DashboardViewModel.cs`
 
@@ -1235,7 +1235,7 @@ public partial class MainWindow : Window
 }
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -1245,7 +1245,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 构建 UI，确认可编译**
+- [x] **Step 5: 构建 UI，确认可编译**
 
 Run:
 
@@ -1255,7 +1255,7 @@ dotnet build src/MemoryMonitoring.App/MemoryMonitoring.App.csproj
 
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add src/MemoryMonitoring.App tests/MemoryMonitoring.Tests
@@ -1270,7 +1270,7 @@ git commit -m "feat: add dashboard shell and initial view model"
 - Modify: `README.md`
 - Create: `tests/MemoryMonitoring.Tests/Core/ActionLogStoreTests.cs`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `tests/MemoryMonitoring.Tests/Core/ActionLogStoreTests.cs`
 
@@ -1297,7 +1297,7 @@ public sealed class ActionLogStoreTests
 }
 ```
 
-- [ ] **Step 2: 运行测试，确认失败**
+- [x] **Step 2: 运行测试，确认失败**
 
 Run:
 
@@ -1307,7 +1307,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: FAIL，提示 `ActionLogStore` 未定义。
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 `src/MemoryMonitoring.Infrastructure/Persistence/ActionLogStore.cs`
 
@@ -1372,7 +1372,7 @@ public sealed class PowerModeBridge
 - 开机后 / 唤醒后软回收
 ```
 
-- [ ] **Step 4: 运行测试，确认通过**
+- [x] **Step 4: 运行测试，确认通过**
 
 Run:
 
@@ -1382,7 +1382,7 @@ dotnet test tests/MemoryMonitoring.Tests/MemoryMonitoring.Tests.csproj --filter 
 
 Expected: PASS
 
-- [ ] **Step 5: 做一次手工验证清单**
+- [x] **Step 5: 做一次手工验证清单**
 
 Run:
 
@@ -1405,7 +1405,7 @@ Expected:
 - 提权执行器可以独立启动
 - 自动化编排不会对白名单生成挂起动作
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add README.md src/MemoryMonitoring.Infrastructure tests/MemoryMonitoring.Tests
@@ -1444,3 +1444,21 @@ Plan complete and saved to `docs/superpowers/plans/2026-06-03-windows-memory-gua
 **2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
 
 **Which approach?**
+
+---
+
+## 当前剩余任务追踪
+
+以下是第一阶段计划完成后继续推进的增强任务，按实际代码状态维护：
+
+- [x] 接入持续高内存压力自动清理，并应用全局冷却保护。
+- [x] 接入系统托盘入口，支持最小化隐藏、恢复和退出。
+- [x] 增加当前用户开机自启注册服务。
+- [x] 将开机自启注册服务接入 UI 设置开关。
+- [x] 增强设置文件容错：损坏配置回退默认值，保存时自动创建目录。
+- [x] 更新 README，移除“自启 UI 开关尚未接入”的过期说明。
+- [x] 用执行前后快照估算真实回收量，替代日志中的固定 `128 MB` 或 `-`。
+- [ ] 将前台进程保护、网络敏感进程保护、新启动进程保护期纳入策略模型和清理计划。
+- [ ] 增强进程级自动治理编排：按规则周期性 trim、降优先级、节流，并避免对白名单生成危险动作。
+- [ ] 完善执行器不可用/提权失败时的 UI 状态提示和重试路径。
+- [ ] 独立评估 `ClearSystemFileCache` 与 `CombineMemoryPages` 的稳定实现；未验证前保持显式失败。

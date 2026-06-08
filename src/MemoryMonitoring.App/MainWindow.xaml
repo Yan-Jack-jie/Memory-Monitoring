@@ -292,7 +292,7 @@
                                 <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#202938" Text="上次清理结果" />
                                 <TextBlock Margin="0,14,0,0" Style="{StaticResource SubtleTextStyle}" Text="动作：Trim 工作集" />
                                 <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="结果：成功" />
-                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="回收内存：128 MB" />
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="回收内存以历史记录为准" />
                             </StackPanel>
                         </Border>
                     </Grid>

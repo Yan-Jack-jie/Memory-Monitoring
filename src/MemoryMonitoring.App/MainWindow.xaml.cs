@@ -266,11 +266,13 @@ public partial class MainWindow : Window
     private async void RunTrimAction_OnClick(object sender, RoutedEventArgs e)
     {
         var request = BuildExecutionRequest();
+        var before = _systemMemorySampler.Sample();
         var response = await ExecuteRequestAsync(request, CancellationToken.None);
+        var after = _systemMemorySampler.Sample();
 
         foreach (var result in response.Results)
         {
-            var reclaimed = result.Type == CleanupActionType.TrimWorkingSet ? "128 MB" : "-";
+            var reclaimed = MemoryReclaimEstimator.FormatReclaimedMemory(before, after, result.Success);
             var target = ProcessManagementGrid.SelectedItem is ProcessManagementItem processItem
                 ? processItem.ProcessName
                 : "全局";
@@ -288,11 +290,14 @@ public partial class MainWindow : Window
         var request = new ExecutorRequest(
             Guid.NewGuid(),
             _cleanupPlanBuilder.BuildSystemActions(highPressure: false));
+        var before = _systemMemorySampler.Sample();
         var response = await ExecuteRequestAsync(request, cancellationToken);
+        var after = _systemMemorySampler.Sample();
 
         foreach (var result in response.Results)
         {
-            await AppendActionLogAsync(result.Message, "System", result.Success ? "成功" : "失败", "-");
+            var reclaimed = MemoryReclaimEstimator.FormatReclaimedMemory(before, after, result.Success);
+            await AppendActionLogAsync(result.Message, "System", result.Success ? "成功" : "失败", reclaimed);
         }
 
         await Dispatcher.InvokeAsync(async () => await LoadHistoryAsync());
@@ -312,11 +317,14 @@ public partial class MainWindow : Window
     private async Task RunAutomaticCleanupAsync(IReadOnlyList<CleanupAction> actions, CancellationToken cancellationToken)
     {
         var request = new ExecutorRequest(Guid.NewGuid(), actions);
+        var before = _systemMemorySampler.Sample();
         var response = await ExecuteRequestAsync(request, cancellationToken);
+        var after = _systemMemorySampler.Sample();
 
         foreach (var result in response.Results)
         {
-            await AppendActionLogAsync(result.Message, result.ProcessId is null ? "System" : result.ProcessId.Value.ToString(CultureInfo.InvariantCulture), result.Success ? "成功" : "失败", "-");
+            var reclaimed = MemoryReclaimEstimator.FormatReclaimedMemory(before, after, result.Success);
+            await AppendActionLogAsync(result.Message, result.ProcessId is null ? "System" : result.ProcessId.Value.ToString(CultureInfo.InvariantCulture), result.Success ? "成功" : "失败", reclaimed);
         }
 
         await Dispatcher.InvokeAsync(async () => await LoadHistoryAsync());
