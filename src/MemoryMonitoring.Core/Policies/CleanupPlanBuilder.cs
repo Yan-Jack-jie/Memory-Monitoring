@@ -30,4 +30,20 @@ public sealed class CleanupPlanBuilder
 
         return actions;
     }
+
+    public IReadOnlyList<CleanupAction> BuildSystemActions(bool highPressure)
+    {
+        var actions = new List<CleanupAction>
+        {
+            new(CleanupActionType.PurgeLowPriorityStandby, null, "System")
+        };
+
+        if (highPressure)
+        {
+            actions.Add(new CleanupAction(CleanupActionType.PurgeStandby, null, "System"));
+            actions.Add(new CleanupAction(CleanupActionType.FlushModifiedPages, null, "System"));
+        }
+
+        return actions;
+    }
 }

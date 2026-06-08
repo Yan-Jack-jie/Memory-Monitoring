@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using MemoryMonitoring.App.ViewModels;
 using MemoryMonitoring.Core.Contracts;
 using MemoryMonitoring.Core.Models;
+using MemoryMonitoring.Core.Policies;
 using MemoryMonitoring.Infrastructure.Monitoring;
 using MemoryMonitoring.Infrastructure.Persistence;
 using MemoryMonitoring.Infrastructure.Pipes;
@@ -30,6 +31,7 @@ public partial class MainWindow : Window
     private readonly MemoryPolicySettingsStore _settingsStore;
     private readonly ActionLogStore _actionLogStore;
     private readonly ExecutorClient _executorClient;
+    private readonly CleanupPlanBuilder _cleanupPlanBuilder;
     private readonly PowerModeBridge _powerModeBridge;
     private readonly DelayedCleanupScheduler _delayedCleanupScheduler;
     private readonly CancellationTokenSource _lifetimeCts;
@@ -49,6 +51,7 @@ public partial class MainWindow : Window
         _ruleSetStore = new RuleSetStore();
         _settingsStore = new MemoryPolicySettingsStore();
         _actionLogStore = new ActionLogStore();
+        _cleanupPlanBuilder = new CleanupPlanBuilder();
         _powerModeBridge = new PowerModeBridge();
         _delayedCleanupScheduler = new DelayedCleanupScheduler(_powerModeBridge);
         _lifetimeCts = new CancellationTokenSource();
@@ -248,10 +251,7 @@ public partial class MainWindow : Window
     {
         var request = new ExecutorRequest(
             Guid.NewGuid(),
-            new[]
-            {
-                new CleanupAction(CleanupActionType.PurgeLowPriorityStandby, null, "System")
-            });
+            _cleanupPlanBuilder.BuildSystemActions(highPressure: false));
         var response = await ExecuteRequestAsync(request, cancellationToken);
 
         foreach (var result in response.Results)
@@ -375,10 +375,7 @@ public partial class MainWindow : Window
 
         return new ExecutorRequest(
             Guid.NewGuid(),
-            new[]
-            {
-                new CleanupAction(CleanupActionType.PurgeLowPriorityStandby, null, "System")
-            });
+            _cleanupPlanBuilder.BuildSystemActions(highPressure: false));
     }
 
     private static IReadOnlyList<RuleManagementItem> ConvertRuleSetToItems(RuleSet ruleSet)
