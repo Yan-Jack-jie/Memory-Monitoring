@@ -17,4 +17,28 @@ public sealed class MemoryPolicySettingsStoreTests
 
         Assert.Equal(settings, loaded);
     }
+
+    [Fact]
+    public async Task LoadAsync_ShouldReturnDefaultsWhenFileIsCorrupted()
+    {
+        var path = Path.GetTempFileName();
+        await File.WriteAllTextAsync(path, "{not-valid-json");
+        var store = new MemoryPolicySettingsStore();
+
+        var loaded = await store.LoadAsync(path, CancellationToken.None);
+
+        Assert.Equal(MemoryPolicySettings.CreateDefault(), loaded);
+    }
+
+    [Fact]
+    public async Task SaveAsync_ShouldCreateParentDirectoryWhenMissing()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var path = Path.Combine(directory, "settings.json");
+        var store = new MemoryPolicySettingsStore();
+
+        await store.SaveAsync(path, MemoryPolicySettings.CreateDefault(), CancellationToken.None);
+
+        Assert.True(File.Exists(path));
+    }
 }

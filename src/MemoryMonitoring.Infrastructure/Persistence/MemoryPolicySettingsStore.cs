@@ -17,6 +17,12 @@ public sealed class MemoryPolicySettingsStore
 
     public async Task SaveAsync(string path, MemoryPolicySettings settings, CancellationToken cancellationToken)
     {
+        var directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         var json = JsonSerializer.Serialize(settings, _options);
         await File.WriteAllTextAsync(path, json, cancellationToken);
     }
@@ -29,7 +35,14 @@ public sealed class MemoryPolicySettingsStore
         }
 
         var json = await File.ReadAllTextAsync(path, cancellationToken);
-        return JsonSerializer.Deserialize<MemoryPolicySettings>(json, _options)
-            ?? MemoryPolicySettings.CreateDefault();
+        try
+        {
+            return JsonSerializer.Deserialize<MemoryPolicySettings>(json, _options)
+                ?? MemoryPolicySettings.CreateDefault();
+        }
+        catch (JsonException)
+        {
+            return MemoryPolicySettings.CreateDefault();
+        }
     }
 }
