@@ -32,6 +32,7 @@ public partial class MainWindow : Window
     private readonly ActionLogStore _actionLogStore;
     private readonly ExecutorClient _executorClient;
     private readonly CleanupPlanBuilder _cleanupPlanBuilder;
+    private MemoryPressureCleanupScheduler? _pressureCleanupScheduler;
     private readonly PowerModeBridge _powerModeBridge;
     private readonly DelayedCleanupScheduler _delayedCleanupScheduler;
     private readonly CancellationTokenSource _lifetimeCts;
@@ -87,6 +88,7 @@ public partial class MainWindow : Window
     {
         var settings = await _settingsStore.LoadAsync(_settingsPath, CancellationToken.None);
         _viewModel.LoadDefaultAutomationSettings(settings);
+        _pressureCleanupScheduler = new MemoryPressureCleanupScheduler(settings, _cleanupPlanBuilder);
         _delayedCleanupScheduler.ConfigureResumeCleanup(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
         _ = _delayedCleanupScheduler.ScheduleStartupAsync(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
 
@@ -113,6 +115,7 @@ public partial class MainWindow : Window
             var processes = _processMemorySampler.SampleTopProcesses(24);
             _viewModel.Update(snapshot, processes);
             _processItemsView?.Refresh();
+            SchedulePressureCleanupIfNeeded(snapshot);
         }
         catch
         {
@@ -221,6 +224,8 @@ public partial class MainWindow : Window
         }
 
         await _settingsStore.SaveAsync(_settingsPath, settings, CancellationToken.None);
+        _pressureCleanupScheduler = new MemoryPressureCleanupScheduler(settings, _cleanupPlanBuilder);
+        _delayedCleanupScheduler.ConfigureResumeCleanup(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
         await AppendActionLogAsync("保存策略", "settings.json", "成功", "-");
         await LoadHistoryAsync();
 
@@ -257,6 +262,30 @@ public partial class MainWindow : Window
         foreach (var result in response.Results)
         {
             await AppendActionLogAsync(result.Message, "System", result.Success ? "成功" : "失败", "-");
+        }
+
+        await Dispatcher.InvokeAsync(async () => await LoadHistoryAsync());
+    }
+
+    private void SchedulePressureCleanupIfNeeded(SystemMemorySnapshot snapshot)
+    {
+        var actions = _pressureCleanupScheduler?.AddSample(snapshot) ?? Array.Empty<CleanupAction>();
+        if (actions.Count == 0)
+        {
+            return;
+        }
+
+        _ = RunAutomaticCleanupAsync(actions, _lifetimeCts.Token);
+    }
+
+    private async Task RunAutomaticCleanupAsync(IReadOnlyList<CleanupAction> actions, CancellationToken cancellationToken)
+    {
+        var request = new ExecutorRequest(Guid.NewGuid(), actions);
+        var response = await ExecuteRequestAsync(request, cancellationToken);
+
+        foreach (var result in response.Results)
+        {
+            await AppendActionLogAsync(result.Message, result.ProcessId is null ? "System" : result.ProcessId.Value.ToString(CultureInfo.InvariantCulture), result.Success ? "成功" : "失败", "-");
         }
 
         await Dispatcher.InvokeAsync(async () => await LoadHistoryAsync());
