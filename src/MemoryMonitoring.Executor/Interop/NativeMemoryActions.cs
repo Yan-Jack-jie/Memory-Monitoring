@@ -15,6 +15,7 @@ public sealed class NativeMemoryActions : INativeMemoryActions
     private const uint ProcessQueryInformation = 0x0400;
     private const uint ProcessSetQuota = 0x0100;
     private const uint ProcessSetInformation = 0x0200;
+    private const uint ProcessSuspendResume = 0x0800;
     private const int MemoryPriorityVeryLow = 1;
     private const uint PowerThrottlingExecutionSpeed = 0x1;
 
@@ -24,14 +25,16 @@ public sealed class NativeMemoryActions : INativeMemoryActions
         {
             return action.Type switch
             {
-                CleanupActionType.TrimWorkingSet => ExecuteProcessAction(action, TrimWorkingSet),
-                CleanupActionType.SetMemoryPriority => ExecuteProcessAction(action, SetLowMemoryPriority),
-                CleanupActionType.SetPowerThrottling => ExecuteProcessAction(action, SetPowerThrottling),
+                CleanupActionType.TrimWorkingSet => ExecuteProcessAction(action, ProcessQueryInformation | ProcessSetQuota, TrimWorkingSet),
+                CleanupActionType.SetMemoryPriority => ExecuteProcessAction(action, ProcessSetInformation, SetLowMemoryPriority),
+                CleanupActionType.SetPowerThrottling => ExecuteProcessAction(action, ProcessSetInformation, SetPowerThrottling),
                 CleanupActionType.PurgeLowPriorityStandby => ExecuteSystemInformation(action, SystemMemoryListCommand.MemoryPurgeLowPriorityStandbyList),
                 CleanupActionType.PurgeStandby => ExecuteSystemInformation(action, SystemMemoryListCommand.MemoryPurgeStandbyList),
                 CleanupActionType.FlushModifiedPages => ExecuteSystemInformation(action, SystemMemoryListCommand.MemoryFlushModifiedList),
                 CleanupActionType.ClearSystemFileCache => Failure(action, "清理系统文件缓存暂未接入稳定实现"),
                 CleanupActionType.CombineMemoryPages => Failure(action, "内存页合并暂未接入稳定实现"),
+                CleanupActionType.SuspendProcess => ExecuteProcessAction(action, ProcessSuspendResume, SuspendProcess),
+                CleanupActionType.ResumeProcess => ExecuteProcessAction(action, ProcessSuspendResume, ResumeProcess),
                 _ => Failure(action, $"动作 {action.Type} 暂不支持真实执行")
             };
         }
@@ -43,6 +46,7 @@ public sealed class NativeMemoryActions : INativeMemoryActions
 
     private static ActionResult ExecuteProcessAction(
         CleanupAction action,
+        uint desiredAccess,
         Func<SafeProcessHandle, string> execute)
     {
         if (action.ProcessId is null)
@@ -51,7 +55,7 @@ public sealed class NativeMemoryActions : INativeMemoryActions
         }
 
         using var process = OpenProcess(
-            ProcessQueryInformation | ProcessSetQuota | ProcessSetInformation,
+            desiredAccess,
             inheritHandle: false,
             (uint)action.ProcessId.Value);
 
@@ -114,6 +118,28 @@ public sealed class NativeMemoryActions : INativeMemoryActions
         return "已设置后台节流";
     }
 
+    private static string SuspendProcess(SafeProcessHandle process)
+    {
+        var status = NtSuspendProcess(process);
+        if (status != 0)
+        {
+            throw new InvalidOperationException($"挂起进程失败，NTSTATUS=0x{status:X8}");
+        }
+
+        return "已挂起目标进程";
+    }
+
+    private static string ResumeProcess(SafeProcessHandle process)
+    {
+        var status = NtResumeProcess(process);
+        if (status != 0)
+        {
+            throw new InvalidOperationException($"恢复进程失败，NTSTATUS=0x{status:X8}");
+        }
+
+        return "已恢复目标进程";
+    }
+
     private static ActionResult ExecuteSystemInformation(
         CleanupAction action,
         SystemMemoryListCommand command)
@@ -172,6 +198,12 @@ public sealed class NativeMemoryActions : INativeMemoryActions
         SystemInformationClass systemInformationClass,
         ref int systemInformation,
         int systemInformationLength);
+
+    [DllImport("ntdll.dll")]
+    private static extern int NtSuspendProcess(SafeProcessHandle processHandle);
+
+    [DllImport("ntdll.dll")]
+    private static extern int NtResumeProcess(SafeProcessHandle processHandle);
 
     private enum ProcessInformationClass
     {

@@ -32,4 +32,32 @@ public sealed class NativeMemoryActionsTests
         Assert.False(result.Success);
         Assert.Contains("暂未接入", result.Message);
     }
+
+    [Fact]
+    public void SuspendAction_ShouldUseProcessExecutionPath()
+    {
+        var actions = new NativeMemoryActions();
+
+        var result = actions.Execute(new CleanupAction(
+            CleanupActionType.SuspendProcess,
+            ProcessId: int.MaxValue,
+            ProcessName: "missing.exe"));
+
+        Assert.False(result.Success);
+        Assert.Contains("打开目标进程失败", result.Message);
+    }
+
+    [Fact]
+    public void ResumeAction_ShouldUseProcessExecutionPath()
+    {
+        var actions = new NativeMemoryActions();
+
+        var result = actions.Execute(new CleanupAction(
+            CleanupActionType.ResumeProcess,
+            ProcessId: int.MaxValue,
+            ProcessName: "missing.exe"));
+
+        Assert.False(result.Success);
+        Assert.Contains("打开目标进程失败", result.Message);
+    }
 }
