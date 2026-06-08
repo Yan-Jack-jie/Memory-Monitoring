@@ -41,6 +41,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     private string _selectedRuleCategoryName = "平衡";
     private string _selectedRuleCooldown = "5 分钟";
     private string _selectedRuleNotes = "浏览器，允许降级和 Trim，避免直接挂起。";
+    private bool _startWithWindows;
     private string _historyTotalActionsText = "0";
     private string _historySuccessCountText = "0";
     private string _historyLastActionText = "-";
@@ -172,6 +173,12 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     {
         get => _cooldownText;
         set => SetField(ref _cooldownText, value);
+    }
+
+    public bool StartWithWindows
+    {
+        get => _startWithWindows;
+        set => SetField(ref _startWithWindows, value);
     }
 
     public string SelectedProcessName
@@ -340,6 +347,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         StartupDelayText = $"{settings.StartupDelaySeconds} 秒";
         ResumeDelayText = $"{settings.ResumeDelaySeconds} 秒";
         CooldownText = $"{settings.GlobalCooldownSeconds} 秒";
+        StartWithWindows = settings.StartWithWindows;
     }
 
     public void SelectProcess(ProcessManagementItem? processItem)

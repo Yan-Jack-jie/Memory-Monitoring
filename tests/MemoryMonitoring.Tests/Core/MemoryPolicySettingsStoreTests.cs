@@ -10,7 +10,7 @@ public sealed class MemoryPolicySettingsStoreTests
     {
         var path = Path.GetTempFileName();
         var store = new MemoryPolicySettingsStore();
-        var settings = new MemoryPolicySettings(80, 1536, 30, 60, 45, 120);
+        var settings = new MemoryPolicySettings(80, 1536, 30, 60, 45, 120, StartWithWindows: true);
 
         await store.SaveAsync(path, settings, CancellationToken.None);
         var loaded = await store.LoadAsync(path, CancellationToken.None);

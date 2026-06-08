@@ -23,5 +23,6 @@ public sealed class RuleDefaultsTests
         Assert.Equal(2_048, settings.AvailableMemoryThresholdMb);
         Assert.Equal(45, settings.SustainedPressureSeconds);
         Assert.Equal(90, settings.StartupDelaySeconds);
+        Assert.False(settings.StartWithWindows);
     }
 }

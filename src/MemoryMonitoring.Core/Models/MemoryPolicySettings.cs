@@ -11,7 +11,8 @@ public sealed record MemoryPolicySettings(
     int SustainedPressureSeconds,
     int StartupDelaySeconds,
     int ResumeDelaySeconds,
-    int GlobalCooldownSeconds)
+    int GlobalCooldownSeconds,
+    bool StartWithWindows = false)
 {
     public static MemoryPolicySettings CreateDefault() =>
         new(
@@ -20,5 +21,6 @@ public sealed record MemoryPolicySettings(
             SustainedPressureSeconds: 45,
             StartupDelaySeconds: 90,
             ResumeDelaySeconds: 60,
-            GlobalCooldownSeconds: 180);
+            GlobalCooldownSeconds: 180,
+            StartWithWindows: false);
 }

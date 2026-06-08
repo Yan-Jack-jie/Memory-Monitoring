@@ -40,4 +40,15 @@ public sealed class DashboardViewModelTests
         Assert.Equal(20, viewModel.MemoryHistory[0].UsedPercent);
         Assert.Equal(39, viewModel.MemoryHistory[^1].UsedPercent);
     }
+
+    [Fact]
+    public void LoadDefaultAutomationSettings_ShouldExposeStartWithWindowsState()
+    {
+        var viewModel = new DashboardViewModel();
+        var settings = new MemoryPolicySettings(80, 1536, 30, 60, 45, 120, StartWithWindows: true);
+
+        viewModel.LoadDefaultAutomationSettings(settings);
+
+        Assert.True(viewModel.StartWithWindows);
+    }
 }

@@ -15,6 +15,7 @@ using MemoryMonitoring.Infrastructure.Monitoring;
 using MemoryMonitoring.Infrastructure.Persistence;
 using MemoryMonitoring.Infrastructure.Pipes;
 using MemoryMonitoring.Infrastructure.Power;
+using MemoryMonitoring.Infrastructure.Startup;
 
 namespace MemoryMonitoring.App;
 
@@ -37,6 +38,7 @@ public partial class MainWindow : Window
     private readonly PowerModeBridge _powerModeBridge;
     private readonly DelayedCleanupScheduler _delayedCleanupScheduler;
     private readonly TrayHost _trayHost;
+    private readonly StartupRegistrationService _startupRegistrationService;
     private readonly CancellationTokenSource _lifetimeCts;
     private readonly DispatcherTimer _refreshTimer;
     private readonly string _ruleSetPath;
@@ -60,6 +62,7 @@ public partial class MainWindow : Window
         _trayHost = new TrayHost();
         _trayHost.RestoreRequested += TrayHost_OnRestoreRequested;
         _trayHost.ExitRequested += TrayHost_OnExitRequested;
+        _startupRegistrationService = new StartupRegistrationService();
         _lifetimeCts = new CancellationTokenSource();
         _viewModel = new DashboardViewModel();
         DataContext = _viewModel;
@@ -251,6 +254,7 @@ public partial class MainWindow : Window
         }
 
         await _settingsStore.SaveAsync(_settingsPath, settings, CancellationToken.None);
+        ApplyStartupRegistration(settings);
         _pressureCleanupScheduler = new MemoryPressureCleanupScheduler(settings, _cleanupPlanBuilder);
         _delayedCleanupScheduler.ConfigureResumeCleanup(settings, RunScheduledSoftCleanupAsync, _lifetimeCts.Token);
         await AppendActionLogAsync("保存策略", "settings.json", "成功", "-");
@@ -493,7 +497,19 @@ public partial class MainWindow : Window
             sustainedSeconds,
             startupSeconds,
             resumeSeconds,
-            cooldownSeconds);
+            cooldownSeconds,
+            _viewModel.StartWithWindows);
+    }
+
+    private void ApplyStartupRegistration(MemoryPolicySettings settings)
+    {
+        if (settings.StartWithWindows)
+        {
+            _startupRegistrationService.Register(ResolveApplicationPath());
+            return;
+        }
+
+        _startupRegistrationService.Unregister();
     }
 
     private static bool TryParsePercent(string input, out int value) =>
@@ -585,5 +601,15 @@ public partial class MainWindow : Window
             "Debug",
             "net8.0",
             "MemoryMonitoring.Executor.exe"));
+    }
+
+    private static string ResolveApplicationPath()
+    {
+        if (!string.IsNullOrWhiteSpace(Environment.ProcessPath))
+        {
+            return Environment.ProcessPath;
+        }
+
+        return Path.Combine(AppContext.BaseDirectory, "MemoryMonitoring.App.exe");
     }
 }
