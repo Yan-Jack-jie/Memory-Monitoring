@@ -73,4 +73,29 @@ public sealed class DashboardViewModelTests
         Assert.False(viewModel.ProtectNetworkSensitiveProcesses);
         Assert.False(viewModel.ProtectNewProcesses);
     }
+
+    [Fact]
+    public void MarkExecutorUnavailable_ShouldExposeRetryState()
+    {
+        var viewModel = new DashboardViewModel();
+
+        viewModel.MarkExecutorUnavailable("执行器不可用，未执行清理动作");
+
+        Assert.Equal("执行器不可用，可重试", viewModel.AutomationStatusText);
+        Assert.Equal("执行器不可用，未执行清理动作", viewModel.ExecutorStatusDetailText);
+        Assert.True(viewModel.CanRetryExecutor);
+    }
+
+    [Fact]
+    public void MarkExecutorHealthy_ShouldClearRetryState()
+    {
+        var viewModel = new DashboardViewModel();
+        viewModel.MarkExecutorUnavailable("执行器不可用，未执行清理动作");
+
+        viewModel.MarkExecutorHealthy();
+
+        Assert.Equal("运行中", viewModel.AutomationStatusText);
+        Assert.Equal("执行器连接正常", viewModel.ExecutorStatusDetailText);
+        Assert.False(viewModel.CanRetryExecutor);
+    }
 }

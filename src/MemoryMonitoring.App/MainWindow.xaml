@@ -106,8 +106,14 @@
                     <TextBlock Style="{StaticResource SectionTitleStyle}" Text="仪表盘" />
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <Border Background="White" BorderBrush="#DDE7EF" BorderThickness="1" CornerRadius="12" Padding="16,10" Margin="0,0,12,0">
-                            <TextBlock Foreground="#1E8E3E" FontWeight="SemiBold" Text="自动化：运行中" />
+                            <StackPanel>
+                                <TextBlock Foreground="#1E8E3E" FontWeight="SemiBold" Text="{Binding AutomationStatusText}" />
+                                <TextBlock Margin="0,4,0,0" Style="{StaticResource SubtleTextStyle}" Text="{Binding ExecutorStatusDetailText}" />
+                            </StackPanel>
                         </Border>
+                        <Button Click="RetryExecutor_OnClick" Background="White" BorderBrush="#DDE7EF" BorderThickness="1" Padding="16,10" Cursor="Hand" Margin="0,0,12,0">
+                            <TextBlock Foreground="#202938" FontWeight="SemiBold" Text="重试执行器" />
+                        </Button>
                         <Button Click="RunTrimAction_OnClick" Background="White" BorderBrush="#DDE7EF" BorderThickness="1" Padding="16,10" Cursor="Hand">
                             <TextBlock Foreground="#202938" FontWeight="SemiBold" Text="立即清理" />
                         </Button>

@@ -19,6 +19,8 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     private string _cacheUsageText = "0 GB";
     private string _statusText = "健康";
     private string _automationStatusText = "运行中";
+    private string _executorStatusDetailText = "执行器连接正常";
+    private bool _canRetryExecutor;
     private double _memoryLoadValue;
     private string _memorySubtitleText = "-";
     private string _whiteListCountText = "0";
@@ -116,6 +118,18 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     {
         get => _automationStatusText;
         private set => SetField(ref _automationStatusText, value);
+    }
+
+    public string ExecutorStatusDetailText
+    {
+        get => _executorStatusDetailText;
+        private set => SetField(ref _executorStatusDetailText, value);
+    }
+
+    public bool CanRetryExecutor
+    {
+        get => _canRetryExecutor;
+        private set => SetField(ref _canRetryExecutor, value);
     }
 
     public string WhiteListCountText
@@ -372,6 +386,20 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         ProtectForegroundProcesses = settings.ProtectForegroundProcesses;
         ProtectNetworkSensitiveProcesses = settings.ProtectNetworkSensitiveProcesses;
         ProtectNewProcesses = settings.NewProcessProtectionSeconds > 0;
+    }
+
+    public void MarkExecutorUnavailable(string message)
+    {
+        AutomationStatusText = "执行器不可用，可重试";
+        ExecutorStatusDetailText = message;
+        CanRetryExecutor = true;
+    }
+
+    public void MarkExecutorHealthy()
+    {
+        AutomationStatusText = "运行中";
+        ExecutorStatusDetailText = "执行器连接正常";
+        CanRetryExecutor = false;
     }
 
     public void SelectProcess(ProcessManagementItem? processItem)

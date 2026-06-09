@@ -334,12 +334,28 @@ public partial class MainWindow : Window
     {
         try
         {
-            return await _executorClient.SendAsync(request, cancellationToken);
+            var response = await _executorClient.SendAsync(request, cancellationToken);
+            _viewModel.MarkExecutorHealthy();
+            return response;
         }
-        catch
+        catch (Exception exception)
         {
+            _viewModel.MarkExecutorUnavailable(exception.Message);
             return BuildFallbackResponse(request);
         }
+    }
+
+    private async void RetryExecutor_OnClick(object sender, RoutedEventArgs e)
+    {
+        var request = new ExecutorRequest(Guid.NewGuid(), Array.Empty<CleanupAction>());
+        var response = await ExecuteRequestAsync(request, CancellationToken.None);
+        var message = response.Results.Count == 0 && !_viewModel.CanRetryExecutor
+            ? "执行器连接正常"
+            : "执行器仍不可用";
+
+        await AppendActionLogAsync("重试执行器连接", "Executor", _viewModel.CanRetryExecutor ? "失败" : "成功", "-");
+        await LoadHistoryAsync();
+        System.Windows.MessageBox.Show(this, message, "Memory Guardian", MessageBoxButton.OK, _viewModel.CanRetryExecutor ? MessageBoxImage.Warning : MessageBoxImage.Information);
     }
 
     private async void AddSelectedProcessToWhitelist_OnClick(object sender, RoutedEventArgs e)
