@@ -34,6 +34,20 @@ public sealed class NativeMemoryActionsTests
     }
 
     [Fact]
+    public void ClearSystemFileCache_ShouldFailExplicitlyUntilStableImplementationExists()
+    {
+        var actions = new NativeMemoryActions();
+
+        var result = actions.Execute(new CleanupAction(
+            CleanupActionType.ClearSystemFileCache,
+            ProcessId: null,
+            ProcessName: "System"));
+
+        Assert.Equal(CleanupActionType.ClearSystemFileCache, result.Type);
+        Assert.False(result.Success);
+    }
+
+    [Fact]
     public void SuspendAction_ShouldUseProcessExecutionPath()
     {
         var actions = new NativeMemoryActions();
