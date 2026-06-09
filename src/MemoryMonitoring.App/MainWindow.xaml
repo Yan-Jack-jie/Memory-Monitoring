@@ -125,7 +125,7 @@
                         <StackPanel>
                             <TextBlock Style="{StaticResource SubtleTextStyle}" Text="内存使用率" />
                             <TextBlock Margin="0,8,0,6" FontSize="34" FontWeight="SemiBold" Foreground="#0E949E" Text="{Binding MemoryLoadText}" />
-                            <ProgressBar Height="8" Value="{Binding MemoryLoadValue}" Maximum="100" Foreground="#0E949E" Background="#E4ECF2" />
+                            <ProgressBar Height="8" Value="{Binding MemoryLoadValue, Mode=OneWay}" Maximum="100" Foreground="#0E949E" Background="#E4ECF2" />
                             <TextBlock Margin="0,8,0,0" Style="{StaticResource SubtleTextStyle}" Text="{Binding MemorySubtitleText}" />
                         </StackPanel>
                     </Border>
