@@ -16,6 +16,28 @@ public sealed class CleanupPlanBuilder
         ProcessRule rule,
         bool highPressure)
     {
+        return BuildTargetedActions(
+            processId,
+            processName,
+            rule,
+            highPressure,
+            MemoryPolicySettings.CreateDefault(),
+            protection: null);
+    }
+
+    public IReadOnlyList<CleanupAction> BuildTargetedActions(
+        int processId,
+        string processName,
+        ProcessRule rule,
+        bool highPressure,
+        MemoryPolicySettings settings,
+        ProcessProtectionContext? protection)
+    {
+        if (IsProtected(settings, protection))
+        {
+            return Array.Empty<CleanupAction>();
+        }
+
         var actions = new List<CleanupAction>
         {
             new(CleanupActionType.TrimWorkingSet, processId, processName),
@@ -29,6 +51,32 @@ public sealed class CleanupPlanBuilder
         }
 
         return actions;
+    }
+
+    private static bool IsProtected(MemoryPolicySettings settings, ProcessProtectionContext? protection)
+    {
+        if (protection is null)
+        {
+            return false;
+        }
+
+        if (settings.ProtectForegroundProcesses && protection.IsForeground)
+        {
+            return true;
+        }
+
+        if (settings.ProtectNetworkSensitiveProcesses && protection.IsNetworkSensitive)
+        {
+            return true;
+        }
+
+        if (protection.StartedAt is null || settings.NewProcessProtectionSeconds <= 0)
+        {
+            return false;
+        }
+
+        return protection.EvaluatedAt - protection.StartedAt.Value
+            < TimeSpan.FromSeconds(settings.NewProcessProtectionSeconds);
     }
 
     public IReadOnlyList<CleanupAction> BuildSystemActions(bool highPressure)

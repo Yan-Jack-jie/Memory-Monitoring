@@ -12,7 +12,10 @@ public sealed record MemoryPolicySettings(
     int StartupDelaySeconds,
     int ResumeDelaySeconds,
     int GlobalCooldownSeconds,
-    bool StartWithWindows = false)
+    bool StartWithWindows = false,
+    bool ProtectForegroundProcesses = true,
+    bool ProtectNetworkSensitiveProcesses = true,
+    int NewProcessProtectionSeconds = 120)
 {
     public static MemoryPolicySettings CreateDefault() =>
         new(
@@ -22,5 +25,8 @@ public sealed record MemoryPolicySettings(
             StartupDelaySeconds: 90,
             ResumeDelaySeconds: 60,
             GlobalCooldownSeconds: 180,
-            StartWithWindows: false);
+            StartWithWindows: false,
+            ProtectForegroundProcesses: true,
+            ProtectNetworkSensitiveProcesses: true,
+            NewProcessProtectionSeconds: 120);
 }

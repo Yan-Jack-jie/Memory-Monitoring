@@ -51,4 +51,26 @@ public sealed class DashboardViewModelTests
 
         Assert.True(viewModel.StartWithWindows);
     }
+
+    [Fact]
+    public void LoadDefaultAutomationSettings_ShouldExposeProtectionSettings()
+    {
+        var viewModel = new DashboardViewModel();
+        var settings = new MemoryPolicySettings(
+            80,
+            1536,
+            30,
+            60,
+            45,
+            120,
+            ProtectForegroundProcesses: false,
+            ProtectNetworkSensitiveProcesses: false,
+            NewProcessProtectionSeconds: 0);
+
+        viewModel.LoadDefaultAutomationSettings(settings);
+
+        Assert.False(viewModel.ProtectForegroundProcesses);
+        Assert.False(viewModel.ProtectNetworkSensitiveProcesses);
+        Assert.False(viewModel.ProtectNewProcesses);
+    }
 }

@@ -506,7 +506,12 @@ public partial class MainWindow : Window
             startupSeconds,
             resumeSeconds,
             cooldownSeconds,
-            _viewModel.StartWithWindows);
+            _viewModel.StartWithWindows,
+            _viewModel.ProtectForegroundProcesses,
+            _viewModel.ProtectNetworkSensitiveProcesses,
+            _viewModel.ProtectNewProcesses
+                ? MemoryPolicySettings.CreateDefault().NewProcessProtectionSeconds
+                : 0);
     }
 
     private void ApplyStartupRegistration(MemoryPolicySettings settings)
