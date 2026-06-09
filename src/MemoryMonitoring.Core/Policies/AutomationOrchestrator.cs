@@ -29,4 +29,54 @@ public sealed class AutomationOrchestrator
             rule,
             highPressure: pressureLevel == PressureLevel.High);
     }
+
+    public IReadOnlyList<CleanupAction> BuildProcessPlan(
+        IReadOnlyList<ProcessMemorySnapshot> processes,
+        ProcessClassifier classifier,
+        MemoryPolicySettings settings,
+        PressureLevel pressureLevel,
+        DateTimeOffset evaluatedAt,
+        Func<ProcessMemorySnapshot, ProcessProtectionContext>? protectionFactory = null)
+    {
+        var actions = new List<CleanupAction>();
+        foreach (var process in processes)
+        {
+            var rule = classifier.Classify(process.ProcessName);
+            if (rule.Treatment == ProcessTreatment.WhiteList)
+            {
+                continue;
+            }
+
+            var protection = protectionFactory?.Invoke(process)
+                ?? BuildDefaultProtectionContext(process, evaluatedAt);
+            actions.AddRange(_builder.BuildTargetedActions(
+                process.ProcessId,
+                process.ProcessName,
+                rule,
+                highPressure: pressureLevel == PressureLevel.High,
+                settings,
+                protection));
+        }
+
+        return actions;
+    }
+
+    private static ProcessProtectionContext BuildDefaultProtectionContext(
+        ProcessMemorySnapshot process,
+        DateTimeOffset evaluatedAt)
+    {
+        return new ProcessProtectionContext(
+            IsForeground: process.LastForegroundSeenAt >= evaluatedAt.AddSeconds(-30),
+            IsNetworkSensitive: IsNetworkSensitiveProcess(process.ProcessName),
+            StartedAt: null,
+            EvaluatedAt: evaluatedAt);
+    }
+
+    private static bool IsNetworkSensitiveProcess(string processName)
+    {
+        return processName.Contains("vpn", StringComparison.OrdinalIgnoreCase) ||
+            processName.Contains("wireguard", StringComparison.OrdinalIgnoreCase) ||
+            processName.Contains("tailscale", StringComparison.OrdinalIgnoreCase) ||
+            processName.Contains("zerotier", StringComparison.OrdinalIgnoreCase);
+    }
 }
